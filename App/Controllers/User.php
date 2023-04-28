@@ -19,7 +19,7 @@ class User extends \Core\Controller
 {
 
     /**
-     * Affiche la page de login
+     * AFFICHE LA PAGE DE CONNEXION
      */
     public function loginAction()
     {
@@ -28,17 +28,19 @@ class User extends \Core\Controller
 
             // TODO: Validation
 
+            // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
             $this->login($f);
 
-            // Si login OK, redirige vers le compte
+            // Si la connexion est réussie, redirige l'utilisateur vers son compte
             header('Location: /account');
         }
 
+        // Affiche la page de connexion en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('User/login.html');
     }
 
     /**
-     * Page de création de compte
+     * AFFICHE LA PAGE DE CREATION DE COMPTE
      */
     public function registerAction()
     {
@@ -46,40 +48,45 @@ class User extends \Core\Controller
             $f = $_POST;
 
             if($f['password'] !== $f['password-check']){
-                // TODO: Gestion d'erreur côté utilisateur
+                // TODO: Gestion d'erreur côté utilisateur si les mots de passe ne correspondent pas
             }
 
-            // validation
-
+            // Appelle la méthode "register" pour créer le compte utilisateur avec les données du formulaire
             $this->register($f);
-            // TODO: Rappeler la fonction de login pour connecter l'utilisateur
+
+            // TODO: Rappeler la méthode "login" pour connecter l'utilisateur automatiquement
+            header('Location: /account');
         }
 
+        // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('User/register.html');
     }
 
     /**
-     * Affiche la page du compte
+     * AFFICHE LA PAGE DU COMPTE UTILISATEUR
      */
     public function accountAction()
     {
+        // Récupère les articles créés par l'utilisateur connecté
         $articles = Articles::getByUser($_SESSION['user']['id']);
 
+        // Affiche la page du compte en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('User/account.html', [
             'articles' => $articles
         ]);
     }
 
-    /*
-     * Fonction privée pour enregister un utilisateur
+    /**
+     * FONCTION PRIVEE POUR ENREGISTRER UN UTILISATEUR
+     * @param array $data Les données du formulaire d'inscription.
      */
     private function register($data)
     {
         try {
-            // Generate a salt, which will be applied to the during the password
-            // hashing process.
+            // Génère un salt, qui sera utilisé pendant le processus de hachage du mot de passe
             $salt = Hash::generateSalt(32);
 
+            // Crée un nouvel utilisateur dans la base de données en utilisant les données du formulaire et le salt généré
             $userID = \App\Models\User::createUser([
                 "email" => $data['email'],
                 "username" => $data['username'],
@@ -87,30 +94,38 @@ class User extends \Core\Controller
                 "salt" => $salt
             ]);
 
+            // Retourne l'ID de l'utilisateur créé
             return $userID;
 
         } catch (Exception $ex) {
-            // TODO : Set flash if error : utiliser la fonction en dessous
-            /* Utility\Flash::danger($ex->getMessage());*/
+            // TODO: Si une erreur se produit, définir un flash pour afficher le message d'erreur à l'utilisateur
+            /* Utility\Flash::danger($ex->getMessage()); */
         }
     }
 
+    /**
+     * FONCTION PRIVEE POUR CONNERCTER UN UTILISATEUR
+     * @param array $data Les données du formulaire de connexion.
+     * @return bool True si la connexion est réussie, false sinon.
+     */
     private function login($data){
         try {
             if(!isset($data['email'])){
                 throw new Exception('TODO');
             }
 
+            // Récupère l'utilisateur correspondant à l'adresse email fournie.
             $user = \App\Models\User::getByLogin($data['email']);
 
+            // Vérifie si le mot de passe fourni correspond au mot de passe haché stocké dans la base de données.
             if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
                 return false;
             }
 
-            // TODO: Create a remember me cookie if the user has selected the option
-            // to remained logged in on the login form.
+            // TODO: Créer un cookie de "remember me" si l'utilisateur a sélectionné cette option sur le formulaire de connexion.
             // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L86
 
+            // Stocke les informations de l'utilisateur dans la session.
             $_SESSION['user'] = array(
                 'id' => $user['id'],
                 'username' => $user['username'],
@@ -119,15 +134,15 @@ class User extends \Core\Controller
             return true;
 
         } catch (Exception $ex) {
-            // TODO : Set flash if error
+            // TODO: Définir un message d'erreur pour l'affichage à l'utilisateur.
             /* Utility\Flash::danger($ex->getMessage());*/
         }
     }
 
 
     /**
-     * Logout: Delete cookie and session. Returns true if everything is okay,
-     * otherwise turns false.
+     * LOGOUT : SUPPRIME LE COOKIE ET LA SESSION
+     * Renvoie true si tout va bien, sinon renvoie false.
      * @access public
      * @return boolean
      * @since 1.0.2
@@ -136,10 +151,10 @@ class User extends \Core\Controller
 
         /*
         if (isset($_COOKIE[$cookie])){
-            // TODO: Delete the users remember me cookie if one has been stored.
+            // TODO: Supprimer le cookie de rappel de l'utilisateur s'il a été stocké.
             // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L148
         }*/
-        // Destroy all data registered to the session.
+        // Supprime toutes les données enregistrées dans la session.
 
         $_SESSION = array();
 

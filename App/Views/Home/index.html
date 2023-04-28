@@ -14,12 +14,15 @@
                             <div class="col-lg-10 col-sm-10 col-xs-8">
                                 <ul class="list-inline">
                                     <li>
-                                        <a href="#" class="color-active">
+                                        <a href="/" class="color-active">
                                             <span class="visible-xs">À la une</span>
                                             <span class="hidden-xs">À la une</span>
                                         </a>
                                     </li>
-                                    <li><a href="#">Autour de moi</a></li>
+                                    <li>
+                                        <!-- TODO: Configurer le bouton autour de moi, ajouter la ville dans le formulaire d'inscription et le formulaire de l'annonce -->
+                                        <a href="#">Autour de moi</a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-lg-2 col-sm-2 col-xs-4">
@@ -43,7 +46,7 @@
 
                     <div class="cb-content">
                         <div class="row" id="articlelist">
-
+                            <!-- Ici s'affiche tous les articles de la page-->
                         </div>
                     </div>
                 </div>
@@ -70,17 +73,17 @@
         }
 
         function renderProduct($product){
-             $('<div class="col-lg-4 col-sm-6 articleitem" id="article-pattern">' +
+             $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
                 '                                <div class="b-article">' +
                 '                                    <div class="v-img">' +
                 '                                        <a href="/product/'+ $product.id + '">' +
                 '                                            <img src="/storage/'+ $product.picture +'" alt=""></a>' +
                 '                                    </div>' +
-                '                                    <div class="v-desc">' +
+                '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
                 '                                        <a href="/product/'+ $product.id + '">'+ $product.name+'</a>' +
                 '                                    </div>' +
-                '                                    <p>'+ $product.description.slice(0, 20) + '...</p>' +
-                '                                    <div class="v-views">' +
+                '                                    <p >'+ $product.description.slice(0, 20) + '...</p>' +
+                '                                    </div><div class="v-views col-sm-3 col-xs-2">' +
                 '                                        '+$product.views+' vues' +
                 '                                    </div>' +
                 '                                </div>' +
