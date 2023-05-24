@@ -52,6 +52,14 @@ class User extends \Core\Controller
                 return null;
             }
 
+            if(strlen($f['password']) < 8 || preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]|[A-Z]|[0-9]/', $f['password']) != 1){
+                $_SESSION['flash'] = "Le mot doit contenir au minimum 8 caractères, avec une majuscule, un chiffre et un caractère spécial (!@$%)";
+                View::renderTemplate('User/register.html.twig');
+                return null;
+            }
+
+          // git flow finish feature/CG13-form-inscription
+
             if($f['password'] !== $f['password-check']){
                 $_SESSION['flash'] = "Les mots de passes ne correspondent pas !";
                 View::renderTemplate('User/register.html.twig');
