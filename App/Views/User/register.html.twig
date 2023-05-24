@@ -23,7 +23,13 @@
                 <div class="l-head">
                     Créer un compte
                 </div>
+
                 <div class="l-form">
+                    {% if session.flash %}
+                        <div class="alert-danger alert">
+                            {{ session.flash }}
+                        </div>
+                    {% endif %}
                     <form method="post" action="">
                         <div class="form-group">
                             <label for="username">Nom d'utilisateur</label>

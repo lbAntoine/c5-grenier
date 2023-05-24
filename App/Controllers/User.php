@@ -2,15 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Config;
 use App\Model\UserRegister;
 use App\Models\Articles;
+use App\Utility\Flash;
 use App\Utility\Hash;
-use App\Utility\Session;
-use \Core\View;
+use Core\View;
 use Exception;
-use http\Env\Request;
-use http\Exception\InvalidArgumentException;
 
 /**
  * User controller
@@ -47,19 +44,41 @@ class User extends \Core\Controller
         if(isset($_POST['submit'])){
             $f = $_POST;
 
+            $user = \App\Models\User::getByLogin($f['email']);
+
+            if ($user) {
+                $_SESSION['flash'] = "Un compte existe déjà pour cette adresse mail !";
+                View::renderTemplate('User/register.html.twig');
+                return null;
+            }
+
+            if(strlen($f['password']) < 8 || preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]|[A-Z]|[0-9]/', $f['password']) != 1){
+                $_SESSION['flash'] = "Le mot doit contenir au minimum 8 caractères, avec une majuscule, un chiffre et un caractère spécial (!@$%)";
+                View::renderTemplate('User/register.html.twig');
+                return null;
+            }
+
+          // git flow finish feature/CG13-form-inscription
+
             if($f['password'] !== $f['password-check']){
-                // TODO: Gestion d'erreur côté utilisateur si les mots de passe ne correspondent pas
+                $_SESSION['flash'] = "Les mots de passes ne correspondent pas !";
+                View::renderTemplate('User/register.html.twig');
+                return null;
             }
 
             // Appelle la méthode "register" pour créer le compte utilisateur avec les données du formulaire
-            $this->register($f);
-
-            // TODO: Rappeler la méthode "login" pour connecter l'utilisateur automatiquement
+            $id = $this->register($f);
+            if ($id != null) {
+                $this->login(['email' => $f['email'],
+                    'password' => $f['password']]
+                );
+            }
             header('Location: /account');
         }
 
         // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('User/register.html');
+         View::renderTemplate('User/register.html.twig');
+        unset($_SESSION['flash']);
     }
 
     /**
@@ -100,6 +119,7 @@ class User extends \Core\Controller
         } catch (Exception $ex) {
             // TODO: Si une erreur se produit, définir un flash pour afficher le message d'erreur à l'utilisateur
             /* Utility\Flash::danger($ex->getMessage()); */
+            $_SESSION['flash'] = $ex->getMessage();
         }
     }
 
@@ -136,6 +156,7 @@ class User extends \Core\Controller
         } catch (Exception $ex) {
             // TODO: Définir un message d'erreur pour l'affichage à l'utilisateur.
             /* Utility\Flash::danger($ex->getMessage());*/
+            $_SESSION['flash'] = "Une erreur est survenu pendant votre connection !";
         }
     }
 
