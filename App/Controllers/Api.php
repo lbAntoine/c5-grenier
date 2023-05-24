@@ -19,8 +19,8 @@ class Api extends \Core\Controller
      *
      * @throws Exception
      */
-    public function ProductsAction()
-    {
+    public function ProductsAction() {
+        // echo 'Products request';
         $query = $_GET['sort'];
 
         $articles = Articles::getAll($query);
@@ -34,7 +34,8 @@ class Api extends \Core\Controller
      *
      * @throws Exception
      */
-    public function CitiesAction(){
+    public function CitiesAction() {
+        // echo 'Cities request';
 
         $cities = Cities::search($_GET['query']);
 
@@ -46,8 +47,7 @@ class Api extends \Core\Controller
      * RÉCUPÉRATION DES STATS
      * @throws Exception
      */
-    public function StatsAction()
-    {
+    public function StatsAction() {
         // Récupère les stats avec la méthode "fetch" de la classe "Stats"
         $stats = Stats::fetch();
 
