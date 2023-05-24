@@ -20,7 +20,6 @@ class Admin extends \Core\Controller
      */
     public function statsAction()
     {
-
-        View::renderTemplate('Admin/Stats.html', []);
+        View::renderTemplate('Admin/stats.html', []);
     }
 }

@@ -39,6 +39,7 @@
                                             Plus récent <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
+                                            <!-- TODO: Configurer les boutons comme sur le fichier index.html -->
                                             <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Popularité</a></li>
                                             <li><a href="#"><i class="cv cvicon-cv-calender"></i> Plus récent</a></li>
                                         </ul>
@@ -53,9 +54,9 @@
                                 <div class=" col-lg-3 col-sm-6 articleitem">
                                     <div class="b-article">
                                         <div class="v-img">
-                                            <a
-                                                    href="{{ ('/product/' ~ article.id) }}"><img
-                                                    src="{{ ('/storage/' ~ article.picture) }}" alt=""></a>
+                                            <a href="{{ ('/product/' ~ article.id) }}">
+                                                <img src="{{ ('/storage/' ~ article.picture) }}" alt="">
+                                            </a>
                                         </div>
                                         <div class="v-desc">
                                             <a href="{{ ('/product/' ~ article.id) }}">{{ article.name }}</a>

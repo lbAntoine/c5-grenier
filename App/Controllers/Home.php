@@ -13,7 +13,7 @@ class Home extends \Core\Controller
 {
 
     /**
-     * Affiche la page d'accueil
+     * AFFICHE LA PAGE D'ACCUEIL
      *
      * @return void
      * @throws \Exception
