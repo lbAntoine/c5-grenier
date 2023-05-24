@@ -21,7 +21,7 @@
                                     </li>
                                     <li>
                                         <!-- TODO: Configurer le bouton autour de moi, ajouter la ville dans le formulaire d'inscription et le formulaire de l'annonce -->
-                                        <!-- <a href="#">Autour de moi</a>
+                <!-- <a href="#">Autour de moi</a>
                                     </li>
                                 </ul>
                             </div>
@@ -44,22 +44,38 @@
                         </div>
                     </div> -->
 
-                    <div class="cb-content">
-                        <div class="row" id="articlelist">
-                            <!-- Ici s'affiche tous les articles de la page-->
-                        </div>
+                <div class="cb-content">
+                    <div class="row" id="articlelist">
+                        <!-- Ici s'affiche tous les articles de la page-->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 {% endblock %}
 
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
+
+    const labels = {
+        "adminsNumber": "Nombre d'admins",
+        "articlesNumber": "Nombre d'articles",
+        "authorsNumber": "Nombre d'auteurs",
+        "averageViews": "Moyenne des vues",
+        "count": "Nombre de publications",
+        "date": "Dates",
+        "publicationsDates": "Dates de publication",
+        "totalViews": "Total des vues",
+        "usersNumber": "Nombre d'utilisateurs",
+    };
+
+    Chart.defaults.color = '#FFF';
+    Chart.defaults.borderColor = '#36A2EB';
 
     function getStatsAndRender(option = '') {
         $.ajax({
@@ -67,28 +83,86 @@
         }).done(function (result) {
             $('#articlelist').empty();
             for (const property in result) {
-                renderStat(property, Number.parseFloat(result[property]).toLocaleString());
+                if (typeof result[property] === "string") {
+                    renderStat(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+                } else {
+                    renderChart(property, labels[property] ?? property, result[property]);
+                }
             }
         });
     }
 
     /**
      * TODO: Centrer et agrandir le texte dans la div colorée + changer la couleur de fond */
-    function renderStat(statName, statValue) {
+    function renderStat(labelText, statValue) {
         $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
             '                                <div class="b-article">' +
             '                                    <div class="v-img bg-primary text-white text-center d-flex align-items-center">' +
             '                                        <p class="display-1">' + statValue + '</p>' +
             '                                    </div>' +
             '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
-            '                                        <p>' + statName + '</p>' +
+            '                                        <p>' + labelText + '</p>' +
             '                                    </div>' +
-            '                                    </div><div class="v-views col-sm-3 col-xs-2">' +
-            '                                        ' + statValue +
             '                                    </div>' +
-            '                                </div>' +
-            '</div>')
+            '                                        <div class="v-views col-sm-3 col-xs-2">' +
+            '                                           ' + statValue +
+            '                                        </div>' +
+            '                                    </div>' +
+            '                                </div>')
             .appendTo($('#articlelist'));
+    }
+
+    function renderChart(chartName, labelText, data) {
+        $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
+            '                                <div class="b-article">' +
+            '                                    <div class="v-img bg-primary text-white text-center d-flex align-items-center">' +
+            '                                        <p class="display-1">' +
+            '                                        <canvas id="' + chartName + '"></canvas>' +
+            '                                        </p>' +
+            '                                    </div>' +
+            '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
+            '                                        <p>' + labelText + '</p>' +
+            '                                    </div>' +
+            '                                </div>')
+            .appendTo($('#articlelist'));
+
+        const ctx = document.getElementById(chartName);
+        console.log(ctx);
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: "Publications par jour",
+                    data: data.map(e => ({ "x": new Date(e.date), "y": e.count })),
+                    borderWidth: 0,
+                    backgroundColor: '#FFFFFF'
+                }]
+            },
+            options: {
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `Publications le ${new Date(context.parsed.x).toLocaleDateString()} : ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            callback: function (value, index, ticks) {
+                                console.log(value, index, ticks);
+                                return new Date(value).toLocaleDateString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     $(document).ready(function () {
