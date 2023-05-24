@@ -3,7 +3,6 @@
 namespace Core;
 
 use PDO;
-use App\Config;
 
 /**
  * Base model

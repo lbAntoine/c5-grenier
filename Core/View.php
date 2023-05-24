@@ -46,10 +46,12 @@ class View
         if ($twig === null) {
             $loader = new \Twig\Loader\Filesystemloader(dirname(__DIR__) . '/App/Views');
             $twig = new \Twig\Environment($loader, ['debug' => true,]);
+            $twig->addGlobal("session", $_SESSION);
             $twig->addExtension(new \Twig\Extension\DebugExtension());
         }
 
         echo $twig->render($template, View::setDefaultVariables($args));
+        unset($_SESSION['flash']);
     }
 
 
