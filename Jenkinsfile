@@ -41,7 +41,7 @@ pipeline {
     }
     stage("Run tests against the container") {
       steps {
-        sh 'curl http://localhost:8080/api/products?sort='
+        sh 'curl http://localhost:9999/api/products?sort='
       }
     }
   }
