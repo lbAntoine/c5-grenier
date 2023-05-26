@@ -22,7 +22,7 @@ RUN apt update && apt upgrade -y && apt install -y \
 # RUN docker-php-ext-install pdo_mysql mbstring intl zip
 RUN docker-php-ext-install pdo_mysql
 
-RUN git clone https://github.com/lbantoine/c5-grenier
+RUN git clone https://github.com/lbantoine/c5-grenier && cd ./c5-grenier && git checkout feature/ci-integration && git pull && cd
 
 RUN mv ./c5-grenier/* /var/www/html
 
