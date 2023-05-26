@@ -41,7 +41,7 @@ RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /e
 RUN sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf && \
     sed -ri -e 's/\/var\/www\/html/\/var\/www\/html\/public/g' /etc/apache2/sites-available/000-default.conf
 
-RUN cd && mv /000-default.conf /etc/apache2/sites-available/000-default.conf
+RUN mv /var/www/html/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Activez le module Apache "rewrite"
 RUN a2enmod rewrite
