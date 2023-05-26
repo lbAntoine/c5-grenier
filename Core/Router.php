@@ -123,7 +123,6 @@ class Router
                         }
                 }
             }catch (\Exception $e){
-                var_dump($e);
             }
             $controller = $this->params['controller'];
             $controller = $this->convertToStudlyCaps($controller);

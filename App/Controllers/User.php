@@ -2,9 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Model\UserRegister;
 use App\Models\Articles;
-use App\Utility\Flash;
 use App\Utility\Hash;
 use Core\View;
 use Exception;
@@ -21,7 +19,7 @@ class User extends \Core\Controller
     public function loginAction()
     {
         if(isset($_POST['submit'])){
-            $f = $_POST;
+            $f = array_map('htmlspecialchars', $_POST);;
             // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
             $connect = $this->login($f);
             if ($connect){
@@ -114,9 +112,8 @@ class User extends \Core\Controller
             return $userID;
 
         } catch (Exception $ex) {
-            // TODO: Si une erreur se produit, définir un flash pour afficher le message d'erreur à l'utilisateur
             /* Utility\Flash::danger($ex->getMessage()); */
-            $_SESSION['flash'] = $ex->getMessage();
+            $_SESSION['flash'] = "Une erreur est survenu durant l'inscription!";
         }
     }
 
@@ -127,29 +124,27 @@ class User extends \Core\Controller
      */
     private function login($data){
         try {
-            if(!isset($data['email'])){
-                throw new Exception('TODO');
+            if(!isset($data['email']) || (filter_var($data['email'], FILTER_VALIDATE_EMAIL) === false)){
+                $_SESSION['flash'] = "Il faut renseigner une adresse mail valide!";
+                return false;
             }
 
             // Récupère l'utilisateur correspondant à l'adresse email fournie.
             $user = \App\Models\User::getByLogin($data['email']);
-            //var_dump($user);
             // Vérifie si le mot de passe fourni correspond au mot de passe haché stocké dans la base de données.
             if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
-                $_SESSION['flash'] = "Le mot de passe ne correspond pas !";
+                $_SESSION['flash'] = "Le mot de passe ou l'email ne correspond pas !";
                 return false;
             }
 
-            // TODO: Créer un cookie de "remember me" si l'utilisateur a sélectionné cette option sur le formulaire de connexion.
+
+            // Créer un cookie de "remember me" si l'utilisateur a sélectionné cette option sur le formulaire de connexion.
             if (key_exists('remember', $data)){
                 if ($data['remember'] == "on"){
                     $_SESSION['user_is_loggedin'] = 1;
-                    $cookiehash = md5(sha1($user["username"] . $user["id"]));
-
+                    $cookiehash = sha1($user["username"] . $user["id"]);
                     setcookie('uname', $cookiehash, time()+3600*24*365,'/');
-
                     $user['cookie_session'] = $cookiehash;
-
                     \App\Models\User::save($user);
                 }
             }
@@ -163,7 +158,6 @@ class User extends \Core\Controller
             return true;
 
         } catch (Exception $ex) {
-            var_dump($ex->getMessage());
             $_SESSION['flash'] = "Une erreur est survenu pendant votre connection !";
             return false;
         }
@@ -181,8 +175,7 @@ class User extends \Core\Controller
 
 
         if (isset($_COOKIE['uname'])){
-            // TODO: Supprimer le cookie de rappel de l'utilisateur s'il a été stocké.
-            // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L148
+            //  Supprimer le cookie de rappel de l'utilisateur s'il a été stocké.
             $user = \App\Models\User::getByCookie($_COOKIE['uname']);
             $user['cookie_session'] = null;
             \App\Models\User::save($user);
@@ -193,7 +186,6 @@ class User extends \Core\Controller
         // Supprime toutes les données enregistrées dans la session.
 
         $_SESSION = array();
-
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,

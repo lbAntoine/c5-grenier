@@ -44,24 +44,16 @@ class View
      */
     public static function renderTemplate($template, $args = [])
     {
-        try {
-
-
             static $twig = null;
-
             if ($twig === null) {
                 $loader = new \Twig\Loader\Filesystemloader(dirname(__DIR__) . '/App/Views');
                 $twig = new \Twig\Environment($loader, ['debug' => true,]);
                 $twig->addGlobal("session", $_SESSION);
                 $twig->addExtension(new \Twig\Extension\DebugExtension());
             }
-
             echo $twig->render($template, View::setDefaultVariables($args));
 
             unset($_SESSION['flash']);
-        }catch (\Exception $exception){
-            var_dump($exception->getMessage());
-        }
     }
 
 
