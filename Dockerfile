@@ -1,9 +1,9 @@
-FROM node:20-alpine3.16 AS scss-processor
+# FROM node:20-alpine3.16 AS scss-processor
 
-RUN apk add git
-RUN npm install -g sass
-RUN git clone https://github.com/lbantoine/c5-grenier
-RUN sass ./c5-grenier/style:~/style
+# RUN apk add git
+# RUN npm install -g sass
+# RUN git clone https://github.com/lbantoine/c5-grenier
+# RUN sass ./c5-grenier/style:~/style
 
 FROM php:7.4-apache
 
@@ -28,8 +28,8 @@ RUN mv ./c5-grenier/* /var/www/html
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html
-RUN rm -rf public/style
-COPY --from=scss-processor ~/style public/
+# RUN rm -rf public/style
+# COPY --from=scss-processor ~/style public/
 
 RUN composer install
 
