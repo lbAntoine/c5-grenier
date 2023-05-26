@@ -13,7 +13,7 @@
 //         }
 //     }
 // }
-pipeline [
+pipeline {
   agent any
   stages {
     stage("Verify tooling") {
@@ -50,4 +50,4 @@ pipeline [
       sh 'docker compose ps'
     }
   }
-]
+}
