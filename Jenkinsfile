@@ -42,8 +42,6 @@ pipeline {
     stage("Run tests against the container") {
       steps {
         sh 'curl http://localhost:9999/api/products?sort='
-        sh 'ls -la /var/www/html'
-        sh 'ls -la /var/www/html/vendor'
       }
     }
   }
