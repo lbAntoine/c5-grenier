@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use App\Models\User;
+
 /**
  * Router
  *
@@ -107,6 +109,22 @@ class Router
         $url = $this->removeQueryStringVariables($url);
 
         if ($this->match($url)) {
+            try {
+
+                if (isset($_COOKIE['uname']) && !isset($_SESSION['user_is_loggedin'])) {
+                        $user = User::getByCookie($_COOKIE['uname']);
+                        if ($user != null){
+                            $_SESSION['user_is_loggedin'] = 1;
+                            $_SESSION['user'] = array(
+                                'id' => $user['id'],
+                                'username' => $user['username'],
+                            );
+                            // reset expiry date
+                        }
+                }
+            }catch (\Exception $e){
+                var_dump($e);
+            }
             $controller = $this->params['controller'];
             $controller = $this->convertToStudlyCaps($controller);
             $controller = $this->getNamespace() . $controller;

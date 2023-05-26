@@ -22,18 +22,17 @@ class User extends \Core\Controller
     {
         if(isset($_POST['submit'])){
             $f = $_POST;
-
-            // TODO: Validation
-
             // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
-            $this->login($f);
+            $connect = $this->login($f);
+            if ($connect){
+                // Si la connexion est réussie, redirige l'utilisateur vers son compte
+                header('Location: /account');
+            }
 
-            // Si la connexion est réussie, redirige l'utilisateur vers son compte
-            header('Location: /account');
         }
 
         // Affiche la page de connexion en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('User/login.html');
+        View::renderTemplate('User/login.html.twig');
     }
 
     /**
@@ -57,8 +56,6 @@ class User extends \Core\Controller
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
-
-          // git flow finish feature/CG13-form-inscription
 
             if($f['password'] !== $f['password-check']){
                 $_SESSION['flash'] = "Les mots de passes ne correspondent pas !";
@@ -136,14 +133,26 @@ class User extends \Core\Controller
 
             // Récupère l'utilisateur correspondant à l'adresse email fournie.
             $user = \App\Models\User::getByLogin($data['email']);
-
+            //var_dump($user);
             // Vérifie si le mot de passe fourni correspond au mot de passe haché stocké dans la base de données.
             if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
+                $_SESSION['flash'] = "Le mot de passe ne correspond pas !";
                 return false;
             }
 
             // TODO: Créer un cookie de "remember me" si l'utilisateur a sélectionné cette option sur le formulaire de connexion.
-            // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L86
+            if (key_exists('remember', $data)){
+                if ($data['remember'] == "on"){
+                    $_SESSION['user_is_loggedin'] = 1;
+                    $cookiehash = md5(sha1($user["username"] . $user["id"]));
+
+                    setcookie('uname', $cookiehash, time()+3600*24*365,'/');
+
+                    $user['cookie_session'] = $cookiehash;
+
+                    \App\Models\User::save($user);
+                }
+            }
 
             // Stocke les informations de l'utilisateur dans la session.
             $_SESSION['user'] = array(
@@ -154,27 +163,33 @@ class User extends \Core\Controller
             return true;
 
         } catch (Exception $ex) {
-            // TODO: Définir un message d'erreur pour l'affichage à l'utilisateur.
-            /* Utility\Flash::danger($ex->getMessage());*/
+            var_dump($ex->getMessage());
             $_SESSION['flash'] = "Une erreur est survenu pendant votre connection !";
+            return false;
         }
     }
 
 
     /**
      * LOGOUT : SUPPRIME LE COOKIE ET LA SESSION
-     * Renvoie true si tout va bien, sinon renvoie false.
+     * Renvoie true si tout va bien, sinon renvoie false si tout va mal.
      * @access public
      * @return boolean
      * @since 1.0.2
      */
     public function logoutAction() {
 
-        /*
-        if (isset($_COOKIE[$cookie])){
+
+        if (isset($_COOKIE['uname'])){
             // TODO: Supprimer le cookie de rappel de l'utilisateur s'il a été stocké.
             // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L148
-        }*/
+            $user = \App\Models\User::getByCookie($_COOKIE['uname']);
+            $user['cookie_session'] = null;
+            \App\Models\User::save($user);
+            unset($_COOKIE['uname']);
+            setcookie('uname', null, -1, '/');
+
+        }
         // Supprime toutes les données enregistrées dans la session.
 
         $_SESSION = array();

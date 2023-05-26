@@ -45,6 +45,38 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public static function getByCookie($cookie)
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare("
+            SELECT * FROM users WHERE ( users.cookie_session = :cookie) LIMIT 1
+        ");
+
+        $stmt->bindParam(':cookie', $cookie);
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public static function save($data){
+        $db = static::getDB();
+        $stmt = $db->prepare('UPDATE users
+        SET username = :username, email = :email, password = :password, salt= :salt, cookie_session = :cookie_session
+        WHERE id = :id');
+
+        $stmt->bindParam(':id', $data['id']);
+        $stmt->bindParam(':username', $data['username']);
+        $stmt->bindParam(':email', $data['email']);
+        $stmt->bindParam(':password', $data['password']);
+        $stmt->bindParam(':salt', $data['salt']);
+        $stmt->bindParam(':cookie_session', $data['cookie_session']);
+
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
 
     /**
      * ?
