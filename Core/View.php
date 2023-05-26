@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use App\Models\User;
+
 /**
  * View
  *
@@ -31,6 +33,7 @@ class View
         }
     }
 
+
     /**
      * Render a view template using Twig
      *
@@ -41,17 +44,16 @@ class View
      */
     public static function renderTemplate($template, $args = [])
     {
-        static $twig = null;
+            static $twig = null;
+            if ($twig === null) {
+                $loader = new \Twig\Loader\Filesystemloader(dirname(__DIR__) . '/App/Views');
+                $twig = new \Twig\Environment($loader, ['debug' => true,]);
+                $twig->addGlobal("session", $_SESSION);
+                $twig->addExtension(new \Twig\Extension\DebugExtension());
+            }
+            echo $twig->render($template, View::setDefaultVariables($args));
 
-        if ($twig === null) {
-            $loader = new \Twig\Loader\Filesystemloader(dirname(__DIR__) . '/App/Views');
-            $twig = new \Twig\Environment($loader, ['debug' => true,]);
-            $twig->addGlobal("session", $_SESSION);
-            $twig->addExtension(new \Twig\Extension\DebugExtension());
-        }
-
-        echo $twig->render($template, View::setDefaultVariables($args));
-        unset($_SESSION['flash']);
+            unset($_SESSION['flash']);
     }
 
 
