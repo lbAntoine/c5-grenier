@@ -19,7 +19,8 @@ RUN apt update && apt upgrade -y && apt install -y \
   libpq-dev \
   default-mysql-client
 
-RUN docker-php-ext-install pdo_mysql mbstring intl zip
+# RUN docker-php-ext-install pdo_mysql mbstring intl zip
+RUN docker-php-ext-install pdo_mysql
 
 RUN git clone https://github.com/lbantoine/c5-grenier
 
