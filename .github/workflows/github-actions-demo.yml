@@ -21,6 +21,9 @@ jobs:
       -
         name: Check db logs
         run: docker logs db-container
+      -
+        name: Run a curl test on app
+        run: curl http://localhost:9999/api/products?sort=
 
 # name: ci-demo
 
