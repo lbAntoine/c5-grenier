@@ -2,7 +2,7 @@ name: ci-demo
 on:
   push:
     branches:
-      - 'ci-integration'
+      - 'feature/ci-integration'
 jobs:
   build:
     runs-on: ubuntu-latest
