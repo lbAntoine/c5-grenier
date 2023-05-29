@@ -31,7 +31,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/
-
+RUN cd /var/www/html
 RUN composer install
 
 # Configurez Apache pour utiliser le dossier "public" comme document root
