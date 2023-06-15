@@ -69,7 +69,7 @@
         "averageViews": "Moyenne des vues",
         "count": "Nombre de publications",
         "date": "Dates",
-        "publicationsDates": "Dates de publication",
+        "publicationsDates": "Publications par date",
         "totalViews": "Total des vues",
         "usersNumber": "Nombre d'utilisateurs",
     };
@@ -113,12 +113,16 @@
     }
 
     function renderChart(chartName, labelText, data) {
+        console.log("avant :", data);
+        data = fillDateList(data);
+        console.log("après :", data);
+        data = truncateData(data);
         $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
             '                                <div class="b-article">' +
-            '                                    <div class="v-img bg-primary text-white text-center d-flex align-items-center">' +
-            '                                        <p class="display-1">' +
-            '                                        <canvas id="' + chartName + '"></canvas>' +
-            '                                        </p>' +
+            '                                    <div id="inGeneration" class="v-img bg-primary text-white text-center d-flex align-items-center" style="overflow-x: auto; overflow-y: hidden;">' +
+            '                                        <div class="display-1" style="width:2000%; height: 100%;">' +
+            '                                           <canvas id="' + chartName + '"></canvas>' +
+            '                                        </div>' +
             '                                    </div>' +
             '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
             '                                        <p>' + labelText + '</p>' +
@@ -129,40 +133,65 @@
         const ctx = document.getElementById(chartName);
         console.log(ctx);
         new Chart(ctx, {
-            type: 'scatter',
+            type: 'line',
             data: {
+                labels: data.map(e => new Date(e.date).toLocaleDateString()),
                 datasets: [{
-                    label: "Publications par jour",
-                    data: data.map(e => ({ "x": new Date(e.date), "y": e.count })),
-                    borderWidth: 0,
+                    label: labels[chartName],
+                    data: data.map(e => e.count), //.map(e => ({ "x": new Date(e.date), "y": e.count })),
+                    // borderWidth: 0,
+                    borderColor: '#FFFFFF',
                     backgroundColor: '#FFFFFF'
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                return `Publications le ${new Date(context.parsed.x).toLocaleDateString()} : ${context.parsed.y}`;
+                                console.log((365 - context.parsed.x) * 86400000);
+                                return `Publications le ${new Intl.DateTimeFormat("fr", {dateStyle: "full"}).format(new Date(new Date() - (365 - context.parsed.x) * 86400000))} : ${context.parsed.y}`;
                             }
                         }
                     }
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
-                    },
-                    x: {
                         ticks: {
-                            callback: function (value, index, ticks) {
-                                console.log(value, index, ticks);
-                                return new Date(value).toLocaleDateString();
-                            }
+                            precision: 0
                         }
+
                     }
-                }
+                },
             }
         });
+        inGeneration.scrollLeft = inGeneration.scrollWidth;
+        inGeneration.removeAttribute("id");
+    }
+
+    function fillDateList(data) {
+        let minimumTS = Math.min(...data.map(e => new Date(e.date) / 86400000));
+        let maximumTS = new Date() / 86400000;
+        let filledDateList = [];
+        for (i = 0; i < maximumTS - minimumTS; i++) {
+            filledDateList[i] = { date: (minimumTS + i) * 86400000, count: 0 };
+            // filledDateList[i] = 0;
+        }
+        console.log(filledDateList)
+        data.forEach(e => {
+            filledDateList[new Date(e.date) / 86400000 - minimumTS].count = Number.parseInt(e.count);
+            // filledDateList[new Date(e.date) / 86400000 - minimumTS] = Number.parseInt(e.count);
+            if (new Date(e.date) / 86400000 - minimumTS < 1 || new Date(e.date) / 86400000 - minimumTS > 1820)
+                console.log(new Date(e.date) / 86400000 - minimumTS)
+        });
+        console.log(filledDateList);
+        return filledDateList;
+    }
+
+    function truncateData(data) {
+        return data.splice(data.length - 366);
     }
 
     $(document).ready(function () {
