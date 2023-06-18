@@ -5,7 +5,7 @@ services:
       container_name: app-container
       build: .
       ports:
-        - "9999:80"
+        - "8080:80"
       volumes:
         - .:/var/www/html/
       networks:

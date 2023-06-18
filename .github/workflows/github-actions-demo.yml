@@ -10,6 +10,9 @@ jobs:
       -
         uses: actions/checkout@v3
       -
+        name: Setting up jq
+        run: sudo apt-get install jq
+      -
         name: Build the docker-compose stack
         run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
       -
@@ -23,7 +26,7 @@ jobs:
         run: docker logs db-container
       -
         name: Run a curl test on app
-        run: curl http://localhost:9999/api/products?sort=
+        run: curl http://localhost:8080/api/products?sort= | jq
 
 # name: ci-demo
 

@@ -17,7 +17,8 @@ RUN apt update && apt upgrade -y && apt install -y \
   libonig-dev \
   libzip-dev \
   libpq-dev \
-  default-mysql-client
+  default-mysql-client \
+  jq
 
 # RUN docker-php-ext-install pdo_mysql mbstring intl zip
 RUN docker-php-ext-install pdo_mysql
@@ -34,12 +35,10 @@ WORKDIR /var/www/html
 
 RUN composer install
 
-# Configurez Apache pour utiliser le dossier "public" comme document root
-# RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
-# RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN ls -la /var/www/html
 
-# RUN sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf && \
-#     sed -ri -e 's/\/var\/www\/html/\/var\/www\/html\/public/g' /etc/apache2/sites-available/000-default.conf
+# Configurez Apache pour utiliser le dossier "public" comme document root
+
 
 RUN mv /var/www/html/000-default.conf /etc/apache2/sites-available/000-default.conf
 
