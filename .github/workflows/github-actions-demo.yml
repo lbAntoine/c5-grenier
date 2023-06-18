@@ -28,6 +28,9 @@ jobs:
         name: Run a curl test on app
         # run: curl http://localhost:8080/api/products?sort=
         run: curl http://localhost:8080/
+      -
+        name: Checking running containers
+        run: docker ps -a
 
 # name: ci-demo
 
