@@ -106,7 +106,6 @@ class Router
      */
     public function dispatch($url)
     {
-        $url = $this->removeQueryStringVariables($url);
 
         if ($this->match($url)) {
             try {

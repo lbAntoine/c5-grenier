@@ -59,10 +59,25 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public static function getByToken($token)
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare("
+            SELECT * FROM users WHERE ( users.token = :token) LIMIT 1
+        ");
+
+        $stmt->bindParam(':cookie', $token);
+        $stmt->execute();
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     public static function save($data){
         $db = static::getDB();
         $stmt = $db->prepare('UPDATE users
-        SET username = :username, email = :email, password = :password, salt= :salt, cookie_session = :cookie_session
+        SET username = :username, email = :email, password = :password, salt= :salt, cookie_session = :cookie_session,
+            token = :token
         WHERE id = :id');
 
         $stmt->bindParam(':id', $data['id']);
@@ -71,6 +86,7 @@ class User extends Model {
         $stmt->bindParam(':password', $data['password']);
         $stmt->bindParam(':salt', $data['salt']);
         $stmt->bindParam(':cookie_session', $data['cookie_session']);
+        $stmt->bindParam(':token', $data['token']);
 
         $stmt->execute();
 
