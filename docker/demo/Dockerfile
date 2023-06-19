@@ -42,6 +42,8 @@ RUN composer install -d ./html
 # COPY --from=scss-processor ~/style public/
 
 RUN ls -la ./html/public
+RUN ls -la ./html
+RUN ls -la ./html/public
 
 # Configurez Apache pour utiliser le dossier "public" comme document root
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
