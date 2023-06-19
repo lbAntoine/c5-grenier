@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup Build Image
-        uses: docker compose -f docker/demo/docker-compose.ci.yml up -d
+        run: docker compose -f docker/demo/docker-compose.ci.yml up -d
 
       - name: Wait for service to become available
         run: sleep 30s
