@@ -1,36 +1,88 @@
-name: ci-demo
-on:
+# name: ci-demo
+# on:
+#   push:
+#     branches:
+#       - 'feature/ci-integration'
+#     tags:
+#       - 'v[0-9]+.[0-9]+.[0-9]+'
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       -
+#         uses: actions/checkout@v3
+#       -
+#         name: Setting up jq
+#         run: sudo apt-get install jq
+#       -
+#         name: Build the docker-compose stack
+#         run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
+#       -
+#         name: Checking running containers
+#         run: docker ps -a
+#       -
+#         name: Check logs
+#         run: docker logs app-container
+#       -
+#         name: Check db logs
+#         run: docker logs db-container
+#       -
+#         name: Run a curl test on app
+#         # run: curl http://localhost:8080/api/products?sort=
+#         run: curl http://localhost:8080/
+#       -
+#         name: Checking running containers
+#         run: docker ps -a
+
+name: ci-demo2
+on: 
   push:
     branches:
       - 'feature/ci-integration'
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     steps:
-      -
-        uses: actions/checkout@v3
-      -
-        name: Setting up jq
-        run: sudo apt-get install jq
-      -
-        name: Build the docker-compose stack
-        run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
-      -
-        name: Checking running containers
+      - name: 1. Checkout code
+        uses: actions/checkout@v2
+
+      - name: 2. Setup Build Image
+        uses: docker compose -f docker/demo/docker-compose.ci.yml up -d
+
+      - name: 3. Wait for service to become available
+        run: sleep 30s
+
+      - name: 4. Get available containers
         run: docker ps -a
-      -
-        name: Check logs
+
+      - name: 5.1 Logs for app
         run: docker logs app-container
-      -
-        name: Check db logs
+
+      - name: 5.2 Logs for db
         run: docker logs db-container
-      -
-        name: Run a curl test on app
-        # run: curl http://localhost:8080/api/products?sort=
+
+      - name: 6. Run a curl test on app
         run: curl http://localhost:8080/
-      -
-        name: Checking running containers
-        run: docker ps -a
+
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout code
+        uses: actions/checkout@v2
+
+      - name: 2. Docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 3. Setup Build Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/demo/docker-compose.ci.yml
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/c5-grenier:latest
 
 # name: ci-demo
 
