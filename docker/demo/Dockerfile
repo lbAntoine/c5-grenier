@@ -7,8 +7,6 @@
 
 FROM php:7.4-apache
 
-ARG COMPOSER_ALLOW_SUPERUSER=1
-
 RUN apt update && apt upgrade -y && apt install -y \
   git libmcrypt-dev \
   zlib1g-dev \
