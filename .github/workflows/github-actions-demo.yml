@@ -34,7 +34,7 @@
 #         name: Checking running containers
 #         run: docker ps -a
 
-name: ci-demo2
+name: ci-demo
 on: 
   push:
     branches:
