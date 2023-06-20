@@ -29,6 +29,9 @@ RUN docker-php-ext-install pdo_mysql mbstring intl zip
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
+RUN mkdir -p /var/www/html
+RUN mkdir -p /var/www/html/public
+
 WORKDIR /var/www/
 
 RUN git clone -b feature/ci-integration https://github.com/lbantoine/c5-grenier ./html
