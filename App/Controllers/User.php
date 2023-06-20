@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Articles;
+use App\Models\Cities;
 use App\Utility\Hash;
 use App\Utility\Mailer;
 use Core\View;
@@ -22,7 +23,7 @@ class User extends \Core\Controller
         if(isset($_POST['submit'])){
 
             $f = array_map('htmlspecialchars', $_POST);
-            
+
             // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
             $connect = $this->login($f);
             if ($connect){
@@ -45,11 +46,14 @@ class User extends \Core\Controller
             if(isset($_POST['submit'])){
                 $f = array_map('htmlspecialchars', $_POST);
                 if(!isset($f['emailRecuperation']) || (filter_var($f['emailRecuperation'], FILTER_VALIDATE_EMAIL) === false)){
-                    $_SESSION['flash'] = "Il faut renseigner une adresse mail valide pour la récupération!";
+                    $_SESSION['flash'] = ["message" => "Il faut renseigner une adresse mail valide pour la récupération!",
+                        "type" => "danger"];
+
                 } else {
                     $user = \App\Models\User::getByLogin($f['emailRecuperation']);
                     if ($user == false) {
-                        $_SESSION['flash'] = "l'adresse mail ne correspond à aucun compte.";
+                        $_SESSION['flash'] = ["message" => "l'adresse mail ne correspond à aucun compte.",
+                            "type" => "danger"];
                     } else {
                         $bytes = random_bytes(20);
                         $token = bin2hex($bytes);
@@ -66,9 +70,11 @@ class User extends \Core\Controller
                         $mailer = new Mailer();
                         $result = $mailer->SendMail($subject, $body, $user['email']);
                         if ($result === true) {
-                            $_SESSION['flash'] = "Un email de récuperation vous a été envoyé.";
+                            $_SESSION['flash'] = ["message" => "Un email de récuperation vous a été envoyé.",
+                                "type" => "success"];
                         } else {
-                            $_SESSION['flash'] = $result;
+                            $_SESSION['flash'] = ["message" => $result,
+                                "type" => "danger"];
                         }
                     }
                 }
@@ -102,25 +108,30 @@ class User extends \Core\Controller
 
 
                 if (empty($f['password'])) {
-                    $_SESSION['flash'] = "Veuillez remplir le mot de passe.";
+                    $_SESSION['flash'] = ["message" => "Veuillez remplir le mot de passe.",
+                        "type" => "danger"];
 
                 } elseif (empty($f['password-check'])) {
-                    $_SESSION['flash'] = "Veuillez remplir le mot de passe de confirmation.";
+                    $_SESSION['flash'] = ["message" =>"Veuillez remplir le mot de passe de confirmation.",
+                        "type" => "danger"];
                 }
 
                 if ($f['password'] !== $f['password-check']) {
-                    $_SESSION['flash'] = "Les mots de passe ne correspondent pas.";
+                    $_SESSION['flash'] = ["message" => "Les mots de passe ne correspondent pas.",
+                        "type" => "danger"];
                 }
 
                 $salt = Hash::generateSalt(32);
 
                 $result = \App\Models\User::changePassword($user['email'], $salt, Hash::generate($f['password'], $salt));
                 if ($result === true) {
-                    $_SESSION['flash'] = "Le mot de passe a bien été modifié";
+                    $_SESSION['flash'] = ["message" => "Le mot de passe a bien été modifié",
+                        "type" => "success"];
                     View::renderTemplate('User/login.html.twig');
                     return true;
                 } else {
-                    $_SESSION['flash'] = "Encore";
+                    $_SESSION['flash'] = ["message" => "Il y a eu un problème dans le changement de votre mot de passe.",
+                        "type" => "danger"];
                 }
             }
 
@@ -142,30 +153,31 @@ class User extends \Core\Controller
 
         if(isset($_POST['submit'])){
             $f = $_POST;
-
             $user = \App\Models\User::getByLogin($f['email']);
 
             // Message Erreur : Adresse mail déjà utilisée
             if ($user) {
-                $_SESSION['flash'] = "Un compte existe déjà pour cette adresse mail !";
+                $_SESSION['flash'] = ["message" => "Un compte existe déjà pour cette adresse mail !",
+                    "type" => "danger"];
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
 
             // Message Erreur : Conformiter mot de passe
             if(strlen($f['password']) < 8 || preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]|[A-Z]|[0-9]/', $f['password']) != 1){
-                $_SESSION['flash'] = "Le mot doit contenir au minimum 8 caractères, avec une majuscule, un chiffre et un caractère spécial (!@$%)";
+                $_SESSION['flash'] = ["message" => "Le mot doit contenir au minimum 8 caractères, avec une majuscule, un chiffre et un caractère spécial (!@$%)",
+                    "type" => "danger"];
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
 
             // Message Erreur : Mots de passe différents
             if($f['password'] !== $f['password-check']){
-                $_SESSION['flash'] = "Les mots de passes ne correspondent pas !";
+                $_SESSION['flash'] = ["message" => "Les mots de passes ne correspondent pas !",
+                    "type" => "danger"];
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
-
             // Appelle la méthode "register" pour créer le compte utilisateur avec les données du formulaire
             $id = $this->register($f);
             if ($id != null) {
@@ -175,14 +187,13 @@ class User extends \Core\Controller
             }
 
             // Rappeler la méthode "login" pour connecter l'utilisateur automatiquement
-            header('Location: /login');
+            header('Location: /account');
         }
 
         // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('User/register.html.twig', [
             'villes' => $villes
         ]);
-        unset($_SESSION['flash']);
     }
 
     /**
@@ -218,7 +229,8 @@ class User extends \Core\Controller
                 "email" => $data['email'],
                 "username" => $data['username'],
                 "password" => Hash::generate($data['password'], $salt),
-                "salt" => $salt
+                "salt" => $salt,
+                "city" => $data['city']
             ]);
 
             // Retourne l'ID de l'utilisateur créé
@@ -227,7 +239,8 @@ class User extends \Core\Controller
         } catch (Exception $ex) {
             // Si une erreur se produit, définir un flash pour afficher le message d'erreur à l'utilisateur
             /* Utility\Flash::danger($ex->getMessage()); */
-            $_SESSION['flash'] = "Une erreur est survenu durant l'inscription!";
+            $_SESSION['flash'] = ["message" => "Une erreur est survenu durant l'inscription!",
+                "type" => "danger"];
         }
     }
 
@@ -239,18 +252,25 @@ class User extends \Core\Controller
     private function login($data){
         try {
             if(!isset($data['email']) || (filter_var($data['email'], FILTER_VALIDATE_EMAIL) === false)){
-                $_SESSION['flash'] = "Il faut renseigner une adresse mail valide!";
+                $_SESSION['flash'] = ["message" => "Il faut renseigner une adresse mail valide!",
+                    "type" => "danger"];
                 return false;
             }
 
             // Récupère l'utilisateur correspondant à l'adresse email fournie.
             $user = \App\Models\User::getByLogin($data['email']);
-            // Vérifie si le mot de passe fourni correspond au mot de passe haché stocké dans la base de données.
-            if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
-                $_SESSION['flash'] = "Le mot de passe ou l'email ne correspond pas !";
+
+            if ($user == null) {
+                $_SESSION['flash'] = ["message" => "L'email rentré n'est pas attribué à un compte.",
+                    "type" => "danger"];
                 return false;
             }
-
+            // Vérifie si le mot de passe fourni correspond au mot de passe haché stocké dans la base de données.
+            if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
+                $_SESSION['flash'] = ["message" => "Le mot de passe ou l'email ne correspond pas !",
+                    "type" => "danger"];
+                return false;
+            }
 
             // Créer un cookie de "remember me" si l'utilisateur a sélectionné cette option sur le formulaire de connexion.
             if (key_exists('remember', $data)){
@@ -267,13 +287,14 @@ class User extends \Core\Controller
             $_SESSION['user'] = array(
                 'id' => $user['id'],
                 'username' => $user['username'],
+                'admin' => $user['is_admin']
             );
 
             return true;
 
         } catch (Exception $ex) {
-            // Message d'erreur pour l'affichage à l'utilisateur.
-            $_SESSION['flash'] = "Une erreur est survenu pendant votre connection !";
+            $_SESSION['flash'] = ["message" => "Une erreur est survenu durant la connection!",
+                "type" => "danger"];
             return false;
         }
     }
@@ -298,7 +319,7 @@ class User extends \Core\Controller
             setcookie('uname', null, -1, '/');
 
         }
-        
+
         // Supprime toutes les données enregistrées dans la session.
         $_SESSION = array();
         if (ini_get("session.use_cookies")) {
