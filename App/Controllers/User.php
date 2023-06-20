@@ -48,26 +48,13 @@ class User extends \Core\Controller
                     if ($user == false) {
                         $_SESSION['flash'] = "l'adresse mail ne correspond à aucun compte.";
                     } else {
-                        $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
-
-                        $payload = json_encode(['user_id' => $user['id']]);
-
-                        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-
-                        $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-
-                        $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, 'abC123!', true);
-
-                        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-
-                        $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
-
-                        $user['token'] = $jwt;
-
+                        $bytes = random_bytes(20);
+                        $token = bin2hex($bytes);
+                        $user['token'] = $token;
                         \App\Models\User::save($user);
 
                         // send email with the link and the token
-                        $link = "http://".$_SERVER['SERVER_NAME'].':8080/recuperation/'.$jwt;
+                        $link = "http://".$_SERVER['SERVER_NAME'].':8080/recuperation/'.$token;
 
                         $subject = 'Reinitialisation de mot de passe - VideGrenierEnLigne';
                         $body = View::renderTemplateForMail('User/lien_changement_mdp.html.twig', ["nom" => $user['username'],
@@ -76,7 +63,7 @@ class User extends \Core\Controller
                         $mailer = new Mailer();
                         $result = $mailer->SendMail($subject, $body, $user['email']);
                         if ($result === true) {
-                            $_SESSION['flash'] = "Un email de recuperation vous a ete envoyé.";
+                            $_SESSION['flash'] = "Un email de récuperation vous a été envoyé.";
                         } else {
                             $_SESSION['flash'] = $result;
                         }
@@ -92,7 +79,7 @@ class User extends \Core\Controller
     }
 
     /**
-     * Affiche la page du compte
+     * Affiche la page pour le changement de mot de passe
      */
     public function recuperationAction()
     {
@@ -122,10 +109,9 @@ class User extends \Core\Controller
                     $_SESSION['flash'] = "Les mots de passe ne correspondent pas.";
                 }
 
-                //check ok --> change password
+                $salt = Hash::generateSalt(32);
 
-                $result = \App\Models\User::changePassword($user['email'], $f['password']);
-                // return var_dump($result);
+                $result = \App\Models\User::changePassword($user['email'], $salt, Hash::generate($f['password'], $salt));
                 if ($result === true) {
                     $_SESSION['flash'] = "Le mot de passe a bien été modifié";
                     View::renderTemplate('User/login.html.twig');
