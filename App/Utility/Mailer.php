@@ -16,8 +16,8 @@ class Mailer
             $mail->isSMTP();
             $mail->Host = 'smtp.ethereal.email';
             $mail->SMTPAuth = true;
-            $mail->Username = 'rory.hoeger53@ethereal.email';
-            $mail->Password = 'ck683Vv6YzkfV1Vdvy';
+            $mail->Username = 'lindsay.oreilly40@ethereal.email';
+            $mail->Password = 'xmYeYPFpDsjHbVmXRc';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 

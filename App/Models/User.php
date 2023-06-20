@@ -93,21 +93,22 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public static function getById($userId)
+    {
+        try {
+            $db = static::getDB();
 
-    /**
-     * ?
-     * @access public
-     * @return string|boolean
-     * @throws Exception
-     */
-    public static function login() {
-        $db = static::getDB();
+            $stmt = $db->prepare("
+            SELECT * FROM users WHERE ( users.id = :id) LIMIT 1
+        ");
 
-        $stmt = $db->prepare('SELECT * FROM articles WHERE articles.id = ? LIMIT 1');
+            $stmt->bindParam(':id', $userId);
+            $stmt->execute();
 
-        $stmt->execute([$id]);
-
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        }catch (Exception $e) {
+            var_dump($e);
+        }
     }
 
     public static function changePassword($email, $passwordSalt, $passwordHash)

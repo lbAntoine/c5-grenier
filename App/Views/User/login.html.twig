@@ -22,8 +22,8 @@
                 </div>
                 <div class="l-form">
                     {% if session.flash %}
-                        <div class="alert-danger alert">
-                            {{ session.flash }}
+                        <div class="alert-{{ session.flash.type}} alert" id="flash">
+                            {{ session.flash.message }}
                         </div>
                     {% endif %}
                     <form action="/login" method="post">
@@ -39,7 +39,6 @@
                         </div>
                         <div class="row">
                             <div class="col-lg-12 oublimdp">
-                                <!-- TODO: Configurer le bouton Mot de passe oublié ? -->
                                 <a href="#" data-toggle="modal" data-target="#mdpModal">Mot de passe oublié ?</a>
                             </div>
                         </div>

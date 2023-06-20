@@ -36,6 +36,11 @@
                     </div>
                     <div class="u-area mt-small">
                         <a name="submit" href="" class="btn btn-primary u-btn" data-toggle="modal" data-target="#modalContactForm">Contacter {{article.username}}</a>
+                        {% if session.flash %}
+                            <div class="alert-{{ session.flash.type}} alert" id="flash">
+                                {{ session.flash.message }}
+                            </div>
+                        {% endif %}
                     </div>
                     
                 </div>
@@ -67,7 +72,6 @@
                                 </div>
                             </div>
                             
-                            <!-- TODO: Configurer le formulaire de contact -->
                             <div class="form-contact">
                                 <form action="" method="post" class="modal-body mx-3">
                                     <div class="row">
@@ -92,7 +96,7 @@
                                         <div class="col-lg-12">
                                             <div class="contact-input">
                                                 <i class="fa fa-commenting"></i>
-                                                <textarea placeholder="ENTRER VOTRE MESSAGE"></textarea>
+                                                <textarea name="comment" placeholder="ENTRER VOTRE MESSAGE"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-lg-12">
