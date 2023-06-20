@@ -39,9 +39,9 @@ RUN composer install -d ./html
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/
 
-RUN ls -la /var/www
-RUN ls -la /var
-RUN ls -la ./html/public
+# RUN ls -la /var/www
+# RUN ls -la /var
+# RUN ls -la ./html/public
 
 RUN chown -R www-data:www-data /var/www/html/public
 

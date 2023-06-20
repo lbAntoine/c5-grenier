@@ -35,7 +35,7 @@ COPY . /var/www/html
 
 RUN composer install -d ./html
 
-RUN ls -la /var/www/html
+# RUN ls -la /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html/public
 
