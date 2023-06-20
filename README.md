@@ -46,3 +46,6 @@ Les modèles sont utilisés pour récupérer ou stocker des données dans l'appl
 ```php
 $db = static::getDB();
 ```
+
+
+CG7
