@@ -45,7 +45,7 @@
                     </div> -->
 
                 <div class="cb-content">
-                    <div class="row" id="articlelist">
+                    <div class="row" id="stats-list">
                         <!-- Ici s'affiche tous les articles de la page-->
                     </div>
                 </div>
@@ -77,11 +77,13 @@
     Chart.defaults.color = '#FFF';
     Chart.defaults.borderColor = '#36A2EB';
 
+    const dayDuration = 86400000;
+
     function getStatsAndRender(option = '') {
         $.ajax({
             url: "/api/stats",
         }).done(function (result) {
-            $('#articlelist').empty();
+            $('#stats-list').empty();
             for (const property in result) {
                 if (typeof result[property] === "string") {
                     renderStat(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
@@ -109,14 +111,14 @@
             '                                        </div>' +
             '                                    </div>' +
             '                                </div>')
-            .appendTo($('#articlelist'));
+            .appendTo($('#stats-list'));
     }
 
     function renderChart(chartName, labelText, data) {
-        console.log("avant :", data);
         data = fillDateList(data);
-        console.log("après :", data);
         data = truncateData(data);
+        /**
+         * TODO: Mettre le CSS dans un fichier dédié */
         $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
             '                                <div class="b-article">' +
             '                                    <div id="inGeneration" class="v-img bg-primary text-white text-center d-flex align-items-center" style="overflow-x: auto; overflow-y: hidden;">' +
@@ -128,18 +130,16 @@
             '                                        <p>' + labelText + '</p>' +
             '                                    </div>' +
             '                                </div>')
-            .appendTo($('#articlelist'));
+            .appendTo($('#stats-list'));
 
         const ctx = document.getElementById(chartName);
-        console.log(ctx);
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(e => new Date(e.date).toLocaleDateString()),
                 datasets: [{
                     label: labels[chartName],
-                    data: data.map(e => e.count), //.map(e => ({ "x": new Date(e.date), "y": e.count })),
-                    // borderWidth: 0,
+                    data: data.map(e => e.count),
                     borderColor: '#FFFFFF',
                     backgroundColor: '#FFFFFF'
                 }]
@@ -151,8 +151,7 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                console.log((365 - context.parsed.x) * 86400000);
-                                return `Publications le ${new Intl.DateTimeFormat("fr", {dateStyle: "full"}).format(new Date(new Date() - (365 - context.parsed.x) * 86400000))} : ${context.parsed.y}`;
+                                return `Publications le ${new Intl.DateTimeFormat("fr", { dateStyle: "full" }).format(new Date(new Date() - (365 - context.parsed.x) * dayDuration))} : ${context.parsed.y}`;
                             }
                         }
                     }
@@ -172,21 +171,15 @@
     }
 
     function fillDateList(data) {
-        let minimumTS = Math.min(...data.map(e => new Date(e.date) / 86400000));
-        let maximumTS = new Date() / 86400000;
+        let minimumTS = Math.min(...data.map(e => new Date(e.date) / dayDuration));
+        let maximumTS = new Date() / dayDuration;
         let filledDateList = [];
         for (i = 0; i < maximumTS - minimumTS; i++) {
-            filledDateList[i] = { date: (minimumTS + i) * 86400000, count: 0 };
-            // filledDateList[i] = 0;
+            filledDateList[i] = { date: (minimumTS + i) * dayDuration, count: 0 };
         }
-        console.log(filledDateList)
         data.forEach(e => {
-            filledDateList[new Date(e.date) / 86400000 - minimumTS].count = Number.parseInt(e.count);
-            // filledDateList[new Date(e.date) / 86400000 - minimumTS] = Number.parseInt(e.count);
-            if (new Date(e.date) / 86400000 - minimumTS < 1 || new Date(e.date) / 86400000 - minimumTS > 1820)
-                console.log(new Date(e.date) / 86400000 - minimumTS)
+            filledDateList[new Date(e.date) / dayDuration - minimumTS].count = Number.parseInt(e.count);
         });
-        console.log(filledDateList);
         return filledDateList;
     }
 
