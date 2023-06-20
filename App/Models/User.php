@@ -17,19 +17,23 @@ class User extends Model {
      * Crée un utilisateur
      */
     public static function createUser($data) {
-        $db = static::getDB();
+        try {
+            $db = static::getDB();
 
-        $stmt = $db->prepare('INSERT INTO users(username, city, email, password, salt) VALUES (:username, :city, :email, :password,:salt)');
+            $stmt = $db->prepare('INSERT INTO users(username, city, email, password, salt) VALUES (:username, :city, :email, :password,:salt)');
+            $stmt->bindParam(':username', $data['username']);
+            $stmt->bindParam(':city', $data['city']);
+            $stmt->bindParam(':email', $data['email']);
+            $stmt->bindParam(':password', $data['password']);
+            $stmt->bindParam(':salt', $data['salt']);
 
-        $stmt->bindParam(':username', $data['username']);
-        $stmt->bindParam(':city', $data['city']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':password', $data['password']);
-        $stmt->bindParam(':salt', $data['salt']);
+            $stmt->execute();
 
-        $stmt->execute();
+            return $db->lastInsertId();
+        }catch (Exception $e) {
+            var_dump($e);
+        }
 
-        return $db->lastInsertId();
     }
 
     public static function getByLogin($login)
@@ -95,21 +99,22 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    public static function getById($userId)
+    {
+        try {
+            $db = static::getDB();
 
-    /**
-     * ?
-     * @access public
-     * @return string|boolean
-     * @throws Exception
-     */
-    public static function login() {
-        $db = static::getDB();
+            $stmt = $db->prepare("
+            SELECT * FROM users WHERE ( users.id = :id) LIMIT 1
+        ");
 
-        $stmt = $db->prepare('SELECT * FROM articles WHERE articles.id = ? LIMIT 1');
+            $stmt->bindParam(':id', $userId);
+            $stmt->execute();
 
-        $stmt->execute([$id]);
-
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $stmt->fetch(\PDO::FETCH_ASSOC);
+        }catch (Exception $e) {
+            var_dump($e);
+        }
     }
 
     public static function changePassword($email, $passwordSalt, $passwordHash)

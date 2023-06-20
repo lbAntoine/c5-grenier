@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html.twig" %}
 
 {% block title %}Inscription{% endblock %}
 
@@ -26,8 +26,8 @@
 
                 <div class="l-form">
                     {% if session.flash %}
-                        <div class="alert-danger alert">
-                            {{ session.flash }}
+                        <div class="alert-{{ session.flash.type}} alert" id="flash">
+                            {{ session.flash.message }}
                         </div>
                     {% endif %}
                     <form id="form_register" method="post" action="">

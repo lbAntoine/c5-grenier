@@ -56,7 +56,7 @@ class Api extends \Core\Controller
     {
         // Effectue une recherche dans la liste des villes avec la méthode "search" de la classe "Stats"
         $stats = Stats::fetch();
-
+        var_dump($stats);
         // Envoie la réponse au format JSON
         header('Content-Type: application/json');
         echo json_encode($stats);

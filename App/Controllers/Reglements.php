@@ -21,7 +21,7 @@ class Reglements extends \Core\Controller
     public function conditionsAction()
     {
 
-        View::renderTemplate('Reglements/conditions.html', []);
+        View::renderTemplate('Reglements/conditions.html.twig', []);
     }
 
     /**
@@ -33,7 +33,7 @@ class Reglements extends \Core\Controller
     public function confidentAction()
     {
 
-        View::renderTemplate('Reglements/confident.html', []);
+        View::renderTemplate('Reglements/confident.html.twig', []);
     }
 
     /**
@@ -45,6 +45,6 @@ class Reglements extends \Core\Controller
     public function cookiesAction()
     {
 
-        View::renderTemplate('Reglements/cookies.html', []);
+        View::renderTemplate('Reglements/cookies.html.twig', []);
     }
 }
