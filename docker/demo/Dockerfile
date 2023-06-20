@@ -29,9 +29,6 @@ RUN docker-php-ext-install pdo_mysql mbstring intl zip
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
-RUN mkdir -p /var/www/html
-RUN mkdir -p /var/www/html/public
-
 WORKDIR /var/www/
 
 RUN git clone -b feature/ci-integration https://github.com/lbantoine/c5-grenier ./html
@@ -42,8 +39,8 @@ RUN composer install -d ./html
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/
 
-RUN ls -la ./html/public
-RUN ls -la ./html
+RUN ls -la ./var/www
+RUN ls -la ./var
 RUN ls -la ./html/public
 
 # Configurez Apache pour utiliser le dossier "public" comme document root
