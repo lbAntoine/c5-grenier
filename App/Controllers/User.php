@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Articles;
+use App\Models\Cities;
 use App\Utility\Hash;
 use App\Utility\Mailer;
 use Core\View;
@@ -152,7 +153,6 @@ class User extends \Core\Controller
 
         if(isset($_POST['submit'])){
             $f = $_POST;
-
             $user = \App\Models\User::getByLogin($f['email']);
 
             // Message Erreur : Adresse mail déjà utilisée
@@ -178,7 +178,6 @@ class User extends \Core\Controller
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
-
             // Appelle la méthode "register" pour créer le compte utilisateur avec les données du formulaire
             $id = $this->register($f);
             if ($id != null) {
@@ -188,14 +187,13 @@ class User extends \Core\Controller
             }
 
             // Rappeler la méthode "login" pour connecter l'utilisateur automatiquement
-            header('Location: /login');
+            header('Location: /account');
         }
 
         // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('User/register.html.twig', [
             'villes' => $villes
         ]);
-        unset($_SESSION['flash']);
     }
 
     /**
@@ -231,7 +229,8 @@ class User extends \Core\Controller
                 "email" => $data['email'],
                 "username" => $data['username'],
                 "password" => Hash::generate($data['password'], $salt),
-                "salt" => $salt
+                "salt" => $salt,
+                "city" => $data['city']
             ]);
 
             // Retourne l'ID de l'utilisateur créé

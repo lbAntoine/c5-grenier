@@ -17,19 +17,23 @@ class User extends Model {
      * Crée un utilisateur
      */
     public static function createUser($data) {
-        $db = static::getDB();
+        try {
+            $db = static::getDB();
 
-        $stmt = $db->prepare('INSERT INTO users(username, city, email, password, salt) VALUES (:username, :city, :email, :password,:salt)');
+            $stmt = $db->prepare('INSERT INTO users(username, city, email, password, salt) VALUES (:username, :city, :email, :password,:salt)');
+            $stmt->bindParam(':username', $data['username']);
+            $stmt->bindParam(':city', $data['city']);
+            $stmt->bindParam(':email', $data['email']);
+            $stmt->bindParam(':password', $data['password']);
+            $stmt->bindParam(':salt', $data['salt']);
 
-        $stmt->bindParam(':username', $data['username']);
-        $stmt->bindParam(':city', $data['city']);
-        $stmt->bindParam(':email', $data['email']);
-        $stmt->bindParam(':password', $data['password']);
-        $stmt->bindParam(':salt', $data['salt']);
+            $stmt->execute();
 
-        $stmt->execute();
+            return $db->lastInsertId();
+        }catch (Exception $e) {
+            var_dump($e);
+        }
 
-        return $db->lastInsertId();
     }
 
     public static function getByLogin($login)

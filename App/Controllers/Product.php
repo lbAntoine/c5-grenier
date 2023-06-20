@@ -51,7 +51,7 @@ class Product extends \Core\Controller
         }
 
         // Affiche le formulaire d'ajout d'un produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Add.html');
+        View::renderTemplate('Product/Add.html.twig');
     }
 
     /**
@@ -62,7 +62,6 @@ class Product extends \Core\Controller
     {
         // Récupère l'ID du produit à afficher depuis les paramètres de la route
         $id = $this->route_params['id'];
-
         try {
             // Incrémente le nombre de vues du produit avec l'ID récupéré
             Articles::addOneView($id);
@@ -70,7 +69,6 @@ class Product extends \Core\Controller
             $suggestions = Articles::getSuggest();
             // Récupère les données du produit avec l'ID récupéré
             $article = Articles::getOne($id);
-
             if(isset($_POST['submit'])){
                 $f = array_map('htmlspecialchars', $_POST);
 
@@ -100,11 +98,12 @@ class Product extends \Core\Controller
             // Affiche l'exception levée avec la fonction "var_dump"
             var_dump($e);
         }
-
         // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Show.html', [
+
+        View::renderTemplate('Product/Show.html.twig', [
             'article' => $article[0],
             'suggestions' => $suggestions
         ]);
+
     }
 }
