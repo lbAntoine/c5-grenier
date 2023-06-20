@@ -23,8 +23,11 @@ class Api extends \Core\Controller
         // Récupère la valeur du paramètre "sort" dans la requête GET
         $query = $_GET['sort'];
 
+        // Récupère la valeur du paramètre "recherche" dans la requête GET
+        $recherche = $_GET['recherche'];
+
         // Récupère tous les articles avec la méthode "getAll" de la classe "Articles"
-        $articles = Articles::getAll($query);
+        $articles = Articles::getAll($query,$recherche);
 
         // Envoie la réponse au format JSON
         header('Content-Type: application/json');

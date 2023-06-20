@@ -30,14 +30,14 @@
                             {{ session.flash }}
                         </div>
                     {% endif %}
-                    <form method="post" action="">
+                    <form id="form_register" method="post" action="">
                         <div class="form-group">
                             <label for="username">Nom d'utilisateur</label>
                             <input type="text" class="form-control" id="username" name="username" placeholder="John Doe" required>
                         </div>
-                        <div class="form-group">
+                        <div id="div_ville" class="form-group">
                             <label for="city">Ville</label>
-                            <input type="text" class="form-control" id="city" name="city" placeholder="Marseille" required>
+                            <input type="text" class="form-control" id="city" name="city" value="Rechercher..." onfocus="if(this.value=='Rechercher...')this.value=''" onblur="if(this.value=='')this.value='Rechercher...'" autocomplete="off" required/>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email</label>
@@ -63,4 +63,96 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+	    $(document).ready(function(){
+            // On récupère le formulaire à l'aide de son ID
+            var form_user = document.getElementById("form_register");
+            // On récupère le champ div de la saisie de la ville
+            var div_ville = document.getElementById("div_ville");
+            // On récupère le champ input de saisie de la ville
+            var input = form_user.city;
+
+            // On créer un "UL"
+            var list = document.createElement("ul");
+            // On lui ajoute la classe "suggestions"
+            list.className = "suggestions";
+            // On le cache pour qu'il ne soit pas visible
+            list.style.display = "none";
+
+            // On l'ajoute à l'intérieur du formulaire
+            div_ville.appendChild(list);
+
+            input.onkeyup = function(){
+                // On récupère le texte	
+                var ville_rech = this.value;
+
+                // Si le texte est vide, alors on arrète la la fonction, et on cache la liste
+                if(!ville_rech){
+                    list.style.display = "none";
+                    return;
+                } else {
+                    $.ajax({
+                        url: "/api/Cities" + '?query=' + ville_rech,
+                        success: function(response) {
+                            $liste_villes = response;
+                            console.log($liste_villes);
+                        }
+                    });
+                }
+                
+                // variable qui indiquera le nombre de suggestions correspondantes
+                var suggestions = 0;
+                // On créer une variable qui contiendra toute les suggestions qui seront affichées
+                var frag = document.createDocumentFragment();
+                for(var i = 0, c = $liste_villes.length; i < c; i++){
+                    if(new RegExp("^"+ville_rech,"i").test($liste_villes[i])){
+                        // On créé l'élément HTML "LI"
+                        var word = document.createElement("li");
+                         // On l'ajoute au fragment
+                        frag.appendChild(word);
+                        // On lui mets comme contenu le mot clef avec en gras les lettres entrées (grâce à une RegEx et à la fonction replace() ^^ )
+                        word.innerHTML = $liste_villes[i].replace(new RegExp("^("+ville_rech+")","i"),"<strong>$1</strong>");
+                         // On ajoute le mot clef à l'élément HTML "LI", pour pouvoir le récupérer plus tard
+                        word.mot = $liste_villes[i];
+
+                         // Lorsque le visiteur clique sur le lien
+                        word.onmousedown = function(){
+                            // On re-sélectionne le champ de texte					
+                            input.focus();
+                            // On remplace sa valeur par le mot clef
+                            input.value = this.mot;
+                            // On cache la liste
+                            list.style.display = "none";
+                             // On empêche la dé-sélection du champ
+                            return false;
+                        };		
+                        
+                        // On indique qu'une suggestion a été ajoutée
+                        suggestions++;
+                    }
+                }
+
+                // Si il y a des suggestions qui peuvent être affichées
+                if(suggestions){
+                    // On vide le contenu de la liste
+                    list.innerHTML = "";
+                    // On lui ajoute les différentes suggestions
+                    list.appendChild(frag);
+                    // On affiche la liste
+                    list.style.display = "block";
+                } else { // Sinon s'il n'y en a pas
+                    // On cache la liste
+                    list.style.display = "none";			
+                }
+            };
+
+            input.onblur = function(){
+                list.style.display = "none";	
+            };
+        });
+        
+    </script>
 {% endblock %}
