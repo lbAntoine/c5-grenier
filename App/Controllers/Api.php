@@ -23,8 +23,11 @@ class Api extends \Core\Controller
         // Récupère la valeur du paramètre "sort" dans la requête GET
         $query = $_GET['sort'];
 
+        // Récupère la valeur du paramètre "recherche" dans la requête GET
+        $recherche = $_GET['recherche'];
+
         // Récupère tous les articles avec la méthode "getAll" de la classe "Articles"
-        $articles = Articles::getAll($query);
+        $articles = Articles::getAll($query,$recherche);
 
         // Envoie la réponse au format JSON
         header('Content-Type: application/json');
@@ -46,11 +49,12 @@ class Api extends \Core\Controller
     }
 
     /**
-     * RÉCUPÉRATION DES STATS
+     * RECHERCHE DANS LA LISTE DES VILLES
      * @throws Exception
      */
-    public function StatsAction() {
-        // Récupère les stats avec la méthode "fetch" de la classe "Stats"
+    public function StatsAction()
+    {
+        // Effectue une recherche dans la liste des villes avec la méthode "search" de la classe "Stats"
         $stats = Stats::fetch();
 
         // Envoie la réponse au format JSON

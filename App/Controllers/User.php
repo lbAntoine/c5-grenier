@@ -20,13 +20,16 @@ class User extends \Core\Controller
     public function loginAction()
     {
         if(isset($_POST['submit'])){
+
             $f = array_map('htmlspecialchars', $_POST);
+            
             // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
             $connect = $this->login($f);
             if ($connect){
                 // Si la connexion est réussie, redirige l'utilisateur vers son compte
                 header('Location: /account');
             }
+
         }
 
         // Affiche la page de connexion en appelant la méthode "renderTemplate" de la classe "View"
@@ -134,23 +137,29 @@ class User extends \Core\Controller
      */
     public function registerAction()
     {
+        // Récupère les villes dans la base de données
+        $villes = Cities::getAllVilles();
+
         if(isset($_POST['submit'])){
-            $f = array_map('htmlspecialchars', $_POST);
+            $f = $_POST;
 
             $user = \App\Models\User::getByLogin($f['email']);
 
+            // Message Erreur : Adresse mail déjà utilisée
             if ($user) {
                 $_SESSION['flash'] = "Un compte existe déjà pour cette adresse mail !";
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
 
+            // Message Erreur : Conformiter mot de passe
             if(strlen($f['password']) < 8 || preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]|[A-Z]|[0-9]/', $f['password']) != 1){
                 $_SESSION['flash'] = "Le mot doit contenir au minimum 8 caractères, avec une majuscule, un chiffre et un caractère spécial (!@$%)";
                 View::renderTemplate('User/register.html.twig');
                 return null;
             }
 
+            // Message Erreur : Mots de passe différents
             if($f['password'] !== $f['password-check']){
                 $_SESSION['flash'] = "Les mots de passes ne correspondent pas !";
                 View::renderTemplate('User/register.html.twig');
@@ -164,11 +173,16 @@ class User extends \Core\Controller
                     'password' => $f['password']]
                 );
             }
-            header('Location: /account');
+
+            // Rappeler la méthode "login" pour connecter l'utilisateur automatiquement
+            header('Location: /login');
         }
 
         // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
-         View::renderTemplate('User/register.html.twig');
+        View::renderTemplate('User/register.html.twig', [
+            'villes' => $villes
+        ]);
+        unset($_SESSION['flash']);
     }
 
     /**
@@ -211,6 +225,7 @@ class User extends \Core\Controller
             return $userID;
 
         } catch (Exception $ex) {
+            // Si une erreur se produit, définir un flash pour afficher le message d'erreur à l'utilisateur
             /* Utility\Flash::danger($ex->getMessage()); */
             $_SESSION['flash'] = "Une erreur est survenu durant l'inscription!";
         }
@@ -257,6 +272,7 @@ class User extends \Core\Controller
             return true;
 
         } catch (Exception $ex) {
+            // Message d'erreur pour l'affichage à l'utilisateur.
             $_SESSION['flash'] = "Une erreur est survenu pendant votre connection !";
             return false;
         }
@@ -282,8 +298,8 @@ class User extends \Core\Controller
             setcookie('uname', null, -1, '/');
 
         }
+        
         // Supprime toutes les données enregistrées dans la session.
-
         $_SESSION = array();
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
@@ -295,6 +311,7 @@ class User extends \Core\Controller
 
         session_destroy();
 
+        // Si la déconnexion est réussie, redirige l'utilisateur vers la page d'accueil
         header ("Location: /");
 
         return true;

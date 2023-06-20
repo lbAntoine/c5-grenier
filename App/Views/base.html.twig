@@ -7,7 +7,7 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="/favicon.png">
+        <link rel="icon" href="/images/favicon.png">
 
         <title>Vide Grenier En Ligne | {% block title %}{% endblock %}</title>
 
@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="/style/main.css">
         <link rel="stylesheet" href="/css/font-awesome.min.css">
         <link rel="stylesheet" href="/css/font-circle-video.css">
-
+        
         <!-- font-family: 'Hind', sans-serif; -->
         <link href='https://fonts.googleapis.com/css?family=Hind:400,300,500,600,700|Hind+Guntur:300,400,500,700' rel='stylesheet' type='text/css'>
 
@@ -31,10 +31,10 @@
                 <div class="navbar-container">
                     <div class="container">
                         <div class="row">
-                            <div class="col-xs-3 visible-xs">
+                            <div class="col-xs-2 visible-xs menu-phone">
                                 <a href="#" class="btn-menu-toggle"><i class="cv cvicon-cv-menu"></i></a>
                             </div>
-                            <div class="col-lg-1 col-sm-1 col-xs-6">
+                            <div class="col-lg-1 col-sm-1 col-xs-5 menu-title" style="padding: 0;">
                                 <a class="navbar-brand" href="/">
                                     <img src="/images/logo.png" alt="Vide Grenier en ligne" class="logo" />
                                     <span>Vide Grenier en ligne</span>
@@ -46,14 +46,13 @@
                                 </ul>
                             </div>
 
-                            <div class="col-lg-6 col-sm-5 col-xs-3">
-                                <form action="search.html" method="post">
+                            <div class="col-lg-6 col-sm-5 col-xs-5 recherche">
+                                <form action="?recherche=" method="get">
                                     <div class="topsearch">
                                         <i class="cv cvicon-cv-cancel topsearch-close"></i>
                                         <div class="input-group">
-                                            <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
-                                            <input type="text" class="form-control" placeholder="Rechercher..."
-                                                aria-describedby="sizing-addon2">
+                                            <span class="input-group-addon" name="recherche" id="sizing-addon2"><i class="fa fa-search"></i></span>
+                                            <input type="text" class="form-control" name="recherche" placeholder="Rechercher..." aria-describedby="sizing-addon2">
                                         </div>
                                     </div>
                                 </form>
@@ -98,7 +97,7 @@
             <div class="mobile-menu-head">
                 <a href="#" class="mobile-menu-close"></a>
                 <a class="navbar-brand" href="/">
-                    <img src="images/logo.png" alt="Vide Grenier en ligne name" class="logo" />
+                    <img src="/images/logo.png" alt="Vide Grenier en ligne name" class="logo" />
                     <span>Vide Grenier en ligne</span>
                 </a>
             </div>
@@ -136,17 +135,11 @@
                                 <p>Inscription</p>
                             </a>
                         </li>
-                        <li>
-                            <a href="/register">
-                                <i class="cv cvicon-cv-upload-video"></i>
-                                <p>Inscription</p>
-                            </a>
-                        </li>
                         {%endif %}
                     </ul>
                 </div>
                 {% if user is not null %}
-                <a href="/logout" class="btn mobile-menu-logout">Déconnexion</a>
+                <a href="/" class="btn mobile-menu-logout">Déconnexion</a>
                 {%endif %}
             </div>
         </div>
@@ -160,7 +153,7 @@
                 <div class="row">
                     <div class="container padding-def">
                         <div class="col-lg-1  col-sm-2 col-xs-12 footer-logo">
-                            <!--<a class="navbar-brand" href="index.html.twig"><img src="images/logo.png" alt="Project name" class="logo" /></a>-->
+                            <!--<a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="Project name" class="logo" /></a>-->
                             <a class="navbar-brand" href="/">
                                 <img src="/images/logo.png" alt="Vide Grenier en ligne" class="logo" />
                                 <span>Vide Grenier en ligne</span>
@@ -169,9 +162,9 @@
                         <div class="col-lg-7 col-sm-6 col-xs-12">
                             <div class="f-copy">
                                 <ul class="list-inline">
-                                    <li><a href="/RGPD">Politique relative aux cookies</a></li>
-                                    <li><a href="#">Politique de confidentialité</a></li>
-                                    <li>Copyright 2020 <a href="https://www.cesi.fr">CESI</a></li>
+                                    <li><a href="/cookies">Politique relative aux cookies</a></li>
+                                    <li><a href="/confident">Politique de confidentialité</a></li>
+                                    <li>Copyright 2023 <a href="https://www.cesi.fr">CESI</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -191,11 +184,14 @@
             </div>
         </footer>
         <!-- /footer -->
+
+        
         <script src="/js/jquery.min.js"></script>
         <script src="/bootstrap/js/bootstrap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
         <script src="/js/custom.js"></script>
 
-        {% block javascript %}{% endblock %}
+        {% block javascript %}
+        {% endblock %}
     </body>
 </html>

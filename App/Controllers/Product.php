@@ -44,11 +44,13 @@ class Product extends \Core\Controller
                 // Redirige vers la page du produit nouvellement créé
                 header('Location: /product/' . $id);
             } catch (\Exception $e){
+                // Affiche l'exception levée avec la fonction "var_dump"
+                var_dump($e);
             }
         }
 
         // Affiche le formulaire d'ajout d'un produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Add.html.twig');
+        View::renderTemplate('Product/Add.html');
     }
 
     /**
@@ -68,10 +70,12 @@ class Product extends \Core\Controller
             // Récupère les données du produit avec l'ID récupéré
             $article = Articles::getOne($id);
         } catch(\Exception $e){
+            // Affiche l'exception levée avec la fonction "var_dump"
+            var_dump($e);
         }
 
         // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Show.html.twig', [
+        View::renderTemplate('Product/Show.html', [
             'article' => $article[0],
             'suggestions' => $suggestions
         ]);

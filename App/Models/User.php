@@ -19,9 +19,10 @@ class User extends Model {
     public static function createUser($data) {
         $db = static::getDB();
 
-        $stmt = $db->prepare('INSERT INTO users(username, email, password, salt) VALUES (:username, :email, :password,:salt)');
+        $stmt = $db->prepare('INSERT INTO users(username, city, email, password, salt) VALUES (:username, :city, :email, :password,:salt)');
 
         $stmt->bindParam(':username', $data['username']);
+        $stmt->bindParam(':city', $data['city']);
         $stmt->bindParam(':email', $data['email']);
         $stmt->bindParam(':password', $data['password']);
         $stmt->bindParam(':salt', $data['salt']);
@@ -76,12 +77,13 @@ class User extends Model {
     public static function save($data){
         $db = static::getDB();
         $stmt = $db->prepare('UPDATE users
-        SET username = :username, email = :email, password = :password, salt= :salt, cookie_session = :cookie_session,
+        SET username = :username, city = :city, email = :email, password = :password, salt= :salt, cookie_session = :cookie_session,
             token = :token
         WHERE id = :id');
 
         $stmt->bindParam(':id', $data['id']);
         $stmt->bindParam(':username', $data['username']);
+        $stmt->bindParam(':city', $data['city']);
         $stmt->bindParam(':email', $data['email']);
         $stmt->bindParam(':password', $data['password']);
         $stmt->bindParam(':salt', $data['salt']);
