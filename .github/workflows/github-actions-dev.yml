@@ -69,4 +69,4 @@ jobs:
           script: |
             # docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
             # Execute the script on the remote server
-            sudo su -c /home/lbantoine/code/c5-grenier/docker/prod/deploy.sh -S ${{ secrets.SUDO }}
+            echo ${{ secrets.SUDO }} | sudo -S -c /home/lbantoine/code/c5-grenier/docker/prod/deploy.sh
