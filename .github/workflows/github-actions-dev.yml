@@ -14,7 +14,8 @@ jobs:
       #   run: docker-compose -f docker/demo/docker-compose.ci.yml build --no-cache && docker-compose up -d
 
       - name: Run Build Image
-        run: docker-compose -f docker/demo/docker-compose.ci.yml up -d --wait
+        run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
+        run: docker start db-container & && docker start app-container &
 
       - name: Wait for service to become available
         run: sleep 10s
