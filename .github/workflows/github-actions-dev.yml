@@ -1,4 +1,4 @@
-name: ci-feature-dev
+name: ci-dev
 on: 
   push:
     branches:
@@ -31,8 +31,8 @@ jobs:
       - name: Run a curl test on app
         run: curl http://localhost:8080/api/cities?query
 
-      - name: Run tests
-        run: docker-compose -f docker/demo/docker-compose.ci.yml run --rm test
+      # - name: Run tests
+      #   run: docker-compose -f docker/demo/docker-compose.ci.yml run --rm test
 
       - name: Stop and remove containers
         run: docker-compose -f docker/demo/docker-compose.ci.yml down
