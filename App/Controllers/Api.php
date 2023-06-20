@@ -46,12 +46,11 @@ class Api extends \Core\Controller
     }
 
     /**
-     * RECHERCHE DANS LA LISTE DES VILLES
+     * RÉCUPÉRATION DES STATS
      * @throws Exception
      */
-    public function StatsAction()
-    {
-        // Effectue une recherche dans la liste des villes avec la méthode "search" de la classe "Stats"
+    public function StatsAction() {
+        // Récupère les stats avec la méthode "fetch" de la classe "Stats"
         $stats = Stats::fetch();
 
         // Envoie la réponse au format JSON
