@@ -30,6 +30,8 @@ $router = new Core\Router();
 // Add the routes
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
 $router->add('login', ['controller' => 'User', 'action' => 'login']);
+$router->add('forgot', ['controller' => 'User', 'action' => 'forgot']);
+$router->add('recuperation/{token:\w+}', ['controller' => 'User', 'action' => 'recuperation']);
 $router->add('register', ['controller' => 'User', 'action' => 'register']);
 $router->add('logout', ['controller' => 'User', 'action' => 'logout', 'private' => true]);
 $router->add('account', ['controller' => 'User', 'action' => 'account', 'private' => true]);

@@ -56,6 +56,17 @@ class View
             unset($_SESSION['flash']);
     }
 
+    public static function renderTemplateForMail($template, $args = [])
+    {
+        static $twig = null;
+        if ($twig === null) {
+            $loader = new \Twig\Loader\Filesystemloader(dirname(__DIR__) . '/App/Views');
+            $twig = new \Twig\Environment($loader, ['debug' => true,]);
+            $twig->addExtension(new \Twig\Extension\DebugExtension());
+        }
+        return $twig->render($template, View::setDefaultVariables($args));
+    }
+
 
 
     /**

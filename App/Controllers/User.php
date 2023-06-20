@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Articles;
 use App\Utility\Hash;
+use App\Utility\Mailer;
 use Core\View;
 use Exception;
 
@@ -19,14 +20,13 @@ class User extends \Core\Controller
     public function loginAction()
     {
         if(isset($_POST['submit'])){
-            $f = array_map('htmlspecialchars', $_POST);;
+            $f = array_map('htmlspecialchars', $_POST);
             // Appelle la méthode "login" pour tenter la connexion de l'utilisateur
             $connect = $this->login($f);
             if ($connect){
                 // Si la connexion est réussie, redirige l'utilisateur vers son compte
                 header('Location: /account');
             }
-
         }
 
         // Affiche la page de connexion en appelant la méthode "renderTemplate" de la classe "View"
@@ -34,12 +34,108 @@ class User extends \Core\Controller
     }
 
     /**
+     * AFFICHE LA PAGE DE CONNEXION
+     */
+    public function forgotAction()
+    {
+        try {
+            if(isset($_POST['submit'])){
+                $f = array_map('htmlspecialchars', $_POST);
+                if(!isset($f['emailRecuperation']) || (filter_var($f['emailRecuperation'], FILTER_VALIDATE_EMAIL) === false)){
+                    $_SESSION['flash'] = "Il faut renseigner une adresse mail valide pour la récupération!";
+                } else {
+                    $user = \App\Models\User::getByLogin($f['emailRecuperation']);
+                    if ($user == false) {
+                        $_SESSION['flash'] = "l'adresse mail ne correspond à aucun compte.";
+                    } else {
+                        $bytes = random_bytes(20);
+                        $token = bin2hex($bytes);
+                        $user['token'] = $token;
+                        \App\Models\User::save($user);
+
+                        // send email with the link and the token
+                        $link = "http://".$_SERVER['SERVER_NAME'].':8080/recuperation/'.$token;
+
+                        $subject = 'Reinitialisation de mot de passe - VideGrenierEnLigne';
+                        $body = View::renderTemplateForMail('User/lien_changement_mdp.html.twig', ["nom" => $user['username'],
+                            "link" => $link]);
+
+                        $mailer = new Mailer();
+                        $result = $mailer->SendMail($subject, $body, $user['email']);
+                        if ($result === true) {
+                            $_SESSION['flash'] = "Un email de récuperation vous a été envoyé.";
+                        } else {
+                            $_SESSION['flash'] = $result;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception $e) {
+            var_dump($e);
+        }
+        // Affiche la page de connexion en appelant la méthode "renderTemplate" de la classe "View"
+        header('Location: /login');
+    }
+
+    /**
+     * Affiche la page pour le changement de mot de passe
+     */
+    public function recuperationAction()
+    {
+        try {
+            $token = $this->route_params['token'];
+            if (!isset($token) || trim($token) === '') {
+                return 'Invalid token';
+            }
+
+            $user = \App\Models\User::getByToken($token);
+            if (!isset($user) || $user === false) {
+                View::renderTemplate('404.html.twig');
+            }
+
+            if (isset($_POST['submit'])) {
+                $f = array_map('htmlspecialchars', $_POST); // --> prevent from XSS attack
+
+
+                if (empty($f['password'])) {
+                    $_SESSION['flash'] = "Veuillez remplir le mot de passe.";
+
+                } elseif (empty($f['password-check'])) {
+                    $_SESSION['flash'] = "Veuillez remplir le mot de passe de confirmation.";
+                }
+
+                if ($f['password'] !== $f['password-check']) {
+                    $_SESSION['flash'] = "Les mots de passe ne correspondent pas.";
+                }
+
+                $salt = Hash::generateSalt(32);
+
+                $result = \App\Models\User::changePassword($user['email'], $salt, Hash::generate($f['password'], $salt));
+                if ($result === true) {
+                    $_SESSION['flash'] = "Le mot de passe a bien été modifié";
+                    View::renderTemplate('User/login.html.twig');
+                    return true;
+                } else {
+                    $_SESSION['flash'] = "Encore";
+                }
+            }
+
+            View::renderTemplate('User/resetpassword.html.twig');
+        } catch (Exception $e) {
+            var_dump($e);
+        }
+
+    }
+
+
+    /**
      * AFFICHE LA PAGE DE CREATION DE COMPTE
      */
     public function registerAction()
     {
         if(isset($_POST['submit'])){
-            $f = $_POST;
+            $f = array_map('htmlspecialchars', $_POST);
 
             $user = \App\Models\User::getByLogin($f['email']);
 
@@ -73,7 +169,6 @@ class User extends \Core\Controller
 
         // Affiche la page de création de compte en appelant la méthode "renderTemplate" de la classe "View"
          View::renderTemplate('User/register.html.twig');
-        unset($_SESSION['flash']);
     }
 
     /**
@@ -82,10 +177,14 @@ class User extends \Core\Controller
     public function accountAction()
     {
         // Récupère les articles créés par l'utilisateur connecté
-        $articles = Articles::getByUser($_SESSION['user']['id']);
+        try {
+            $articles = Articles::getByUser($_SESSION['user']['id']);
+        }catch (Exception $e){
+            var_dump($e);
+        }
 
         // Affiche la page du compte en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('User/account.html', [
+        View::renderTemplate('User/account.html.twig', [
             'articles' => $articles
         ]);
     }

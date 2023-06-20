@@ -138,7 +138,6 @@ class Router
 
                 $action = $this->params['action'];
                 $action = $this->convertToCamelCase($action);
-
                 if (preg_match('/action$/i', $action) == 0) {
                     $controller_object->$action();
 
@@ -206,7 +205,6 @@ class Router
     {
         if ($url != '') {
             $parts = explode('&', $url, 2);
-
             if (strpos($parts[0], '=') === false) {
                 $url = $parts[0];
             } else {
