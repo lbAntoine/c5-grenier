@@ -106,6 +106,7 @@ class Router
      */
     public function dispatch($url)
     {
+        $url = $this->removeQueryStringVariables($url);
 
         if ($this->match($url)) {
             try {
@@ -137,7 +138,6 @@ class Router
 
                 $action = $this->params['action'];
                 $action = $this->convertToCamelCase($action);
-
                 if (preg_match('/action$/i', $action) == 0) {
                     $controller_object->$action();
 

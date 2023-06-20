@@ -62,21 +62,19 @@ class User extends \Core\Controller
 
                         $jwt = $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
 
-                        //json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',explode('.', $jwt)[1]))));
                         $user['token'] = $jwt;
 
                         \App\Models\User::save($user);
 
                         // send email with the link and the token
-                        $link = "http://".$_SERVER['SERVER_NAME'].'/reset/'.$jwt;
-
+                        $link = "http://".$_SERVER['SERVER_NAME'].':8080/recuperation/'.$jwt;
 
                         $subject = 'Reinitialisation de mot de passe - VideGrenierEnLigne';
-                        $body = View::renderTemplateForMail('User/lien_changement_mdp.html.twig', ["nom" => $user['name'],
+                        $body = View::renderTemplateForMail('User/lien_changement_mdp.html.twig', ["nom" => $user['username'],
                             "link" => $link]);
 
                         $mailer = new Mailer();
-                        $result = $mailer->SendMail($subject, $body, $f['email']);
+                        $result = $mailer->SendMail($subject, $body, $user['email']);
                         if ($result === true) {
                             $_SESSION['flash'] = "Un email de recuperation vous a ete envoyé.";
                         } else {
@@ -98,48 +96,50 @@ class User extends \Core\Controller
      */
     public function recuperationAction()
     {
-
-        $token = $this->route_params['token'];
-        if (!isset($token) || trim($token) === '') {
-            return 'Invalid token';
-        }
-
-        $token = htmlspecialchars($token);
-
-        $user = \App\Models\User::getByToken($token);
-        if (!isset($user) || $user === false) {
-             View::renderTemplate('404.html.twig');
-        }
-
-        if (isset($_POST['submit'])) {
-            $f = array_map('htmlspecialchars', $_POST); // --> prevent from XSS attack
-
-
-            if (empty($f['password'])) {
-                $_SESSION['flash'] = "Veuillez remplir le mot de passe.";
-
-            } elseif (empty($f['password-check'])) {
-                $_SESSION['flash'] = "Veuillez remplir le mot de passe de confirmation.";
+        try {
+            $token = $this->route_params['token'];
+            if (!isset($token) || trim($token) === '') {
+                return 'Invalid token';
             }
 
-            if ($f['password'] !== $f['password-check']) {
-                $_SESSION['flash'] = "Les mots de passe ne correspondent pas.";
+            $user = \App\Models\User::getByToken($token);
+            if (!isset($user) || $user === false) {
+                View::renderTemplate('404.html.twig');
             }
 
-            //check ok --> change password
+            if (isset($_POST['submit'])) {
+                $f = array_map('htmlspecialchars', $_POST); // --> prevent from XSS attack
 
-            $result = $this->changePassword($user['email'], $f['password']);
-            // return var_dump($result);
-            if ($result === true) {
-                $_SESSION['flash'] = "Le mot de passe a bien été modifié";
-                View::renderTemplate('User/login.html');
-                return true;
-            } else {
-                $_SESSION['flash'] = "Encore";
+
+                if (empty($f['password'])) {
+                    $_SESSION['flash'] = "Veuillez remplir le mot de passe.";
+
+                } elseif (empty($f['password-check'])) {
+                    $_SESSION['flash'] = "Veuillez remplir le mot de passe de confirmation.";
+                }
+
+                if ($f['password'] !== $f['password-check']) {
+                    $_SESSION['flash'] = "Les mots de passe ne correspondent pas.";
+                }
+
+                //check ok --> change password
+
+                $result = \App\Models\User::changePassword($user['email'], $f['password']);
+                // return var_dump($result);
+                if ($result === true) {
+                    $_SESSION['flash'] = "Le mot de passe a bien été modifié";
+                    View::renderTemplate('User/login.html.twig');
+                    return true;
+                } else {
+                    $_SESSION['flash'] = "Encore";
+                }
             }
+
+            View::renderTemplate('User/resetpassword.html.twig');
+        } catch (Exception $e) {
+            var_dump($e);
         }
 
-        View::renderTemplate('User/resetpassword.html');
     }
 
 
@@ -193,13 +193,12 @@ class User extends \Core\Controller
         // Récupère les articles créés par l'utilisateur connecté
         try {
             $articles = Articles::getByUser($_SESSION['user']['id']);
-
         }catch (Exception $e){
             var_dump($e);
         }
 
         // Affiche la page du compte en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('User/account.html', [
+        View::renderTemplate('User/account.html.twig', [
             'articles' => $articles
         ]);
     }

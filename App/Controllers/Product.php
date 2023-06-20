@@ -48,7 +48,7 @@ class Product extends \Core\Controller
         }
 
         // Affiche le formulaire d'ajout d'un produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Add.html');
+        View::renderTemplate('Product/Add.html.twig');
     }
 
     /**
@@ -71,7 +71,7 @@ class Product extends \Core\Controller
         }
 
         // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
-        View::renderTemplate('Product/Show.html', [
+        View::renderTemplate('Product/Show.html.twig', [
             'article' => $article[0],
             'suggestions' => $suggestions
         ]);

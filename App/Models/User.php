@@ -67,7 +67,7 @@ class User extends Model {
             SELECT * FROM users WHERE ( users.token = :token) LIMIT 1
         ");
 
-        $stmt->bindParam(':cookie', $token);
+        $stmt->bindParam(':token', $token);
         $stmt->execute();
 
         return $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -110,5 +110,27 @@ class User extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public static function changePassword($email, $passwordSalt, $passwordHash)
+    {
+        try {
+            $db = static::getDB();
+
+            $stmt = $db->prepare("
+                UPDATE users SET 
+                        password  = :password, 
+                        salt = :salt, 
+                        token = '' 
+                WHERE ( users.email = :email)
+            ");
+
+            $stmt->bindParam(':password', $passwordHash);
+            $stmt->bindParam(':salt', $passwordSalt);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            return true;
+        } catch (\PDOException $e) {
+            return $e;
+        }
+    }
 
 }
