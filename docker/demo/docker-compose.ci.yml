@@ -1,5 +1,5 @@
 version: '3.8'
-name: "vide-grenier-en-ligne"
+# name: "vide-grenier-en-ligne"
 services:
   web:
       container_name: app-container
