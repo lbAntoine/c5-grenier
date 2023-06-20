@@ -26,4 +26,4 @@ jobs:
         run: docker logs db-container
 
       - name: Run a curl test on app
-        run: curl http://localhost:8080/api/products?sort=
+        run: curl http://localhost:8080/api/cities?query
