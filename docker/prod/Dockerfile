@@ -29,6 +29,7 @@ RUN mv composer.phar /usr/local/bin/composer
 WORKDIR /var/www/
 
 COPY . /var/www/html
+RUN ls -la /var/www/html
 
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/

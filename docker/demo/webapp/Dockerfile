@@ -30,6 +30,7 @@ RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
 WORKDIR /var/www/
+RUN ls -la /var/www/html
 
 RUN git clone -b feature/ci-integration https://github.com/lbantoine/c5-grenier ./html
 
