@@ -43,6 +43,8 @@ RUN ls -la ./var/www
 RUN ls -la ./var
 RUN ls -la ./html/public
 
+RUN chown -R www-data:www-data /var/www/html/public
+
 # Configurez Apache pour utiliser le dossier "public" comme document root
 RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
