@@ -30,3 +30,6 @@ jobs:
 
       - name: Run a curl test on app
         run: curl http://localhost:8080/api/cities?query
+
+      - name: Run a curl test on app 2
+        run: curl http://localhost:8080/
