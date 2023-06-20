@@ -19,11 +19,16 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
-    public static function getAll($filter) {
+    public static function getAll($filter,$recherche) {
         $db = static::getDB();
 
         $query = 'SELECT * FROM articles ';
 
+        // Requête permettant de rechercher des articles selon la barre de recherche
+        if($recherche != '') {
+            $query .= ' WHERE articles.name LIKE "%'.$recherche.'%" OR articles.description LIKE "%'.$recherche.'%"' ;
+        }
+        
         switch ($filter){
             case 'views':
                 $query .= ' ORDER BY articles.views DESC';
@@ -34,9 +39,9 @@ class Articles extends Model {
             case '':
                 break;
         }
-
+        
         $stmt = $db->query($query);
-
+        
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -126,12 +131,13 @@ class Articles extends Model {
     public static function save($data) {
         $db = static::getDB();
 
-        $stmt = $db->prepare('INSERT INTO articles(name, description, user_id, published_date) VALUES (:name, :description, :user_id,:published_date)');
+        $stmt = $db->prepare('INSERT INTO articles(name, description, lieu, user_id, published_date) VALUES (:name, :description, :lieu, :user_id,:published_date)');
 
         $published_date =  new DateTime();
         $published_date = $published_date->format('Y-m-d');
         $stmt->bindParam(':name', $data['name']);
         $stmt->bindParam(':description', $data['description']);
+        $stmt->bindParam(':lieu', $data['lieu']);
         $stmt->bindParam(':published_date', $published_date);
         $stmt->bindParam(':user_id', $data['user_id']);
 

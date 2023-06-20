@@ -1,21 +1,35 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Statistiques{% endblock %}
 
 {% block body %}
-<div class="content-wrapper">
-    <div class="container">
+<div class="content-wrapper upload-page edit-page">
+
+    <!-- channel -->
+    <div class="container-fluid statistiques">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="cb-content">
-                    <div class="row" id="stats-list">
-                        <!-- Ici s'affiche tous les articles de la page-->
+            <h1>
+                Statistiques
+            </h1>
+        </div>
+    </div>
+    <!-- ///channel -->
+
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cb-content">
+                        <div class="row" id="articlelist">
+                            <!-- Ici s'affiche tous les articles de la page-->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+
 </div>
 
 {% endblock %}

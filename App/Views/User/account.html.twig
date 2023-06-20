@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "base.html" %}
 
 {% block title %}Mon compte {% endblock %}
 
@@ -16,7 +16,7 @@
     </div>
 
 
-    <div class="content-wrapper">
+    <div class="content-account">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -39,7 +39,7 @@
                                             Plus récent <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <!-- TODO: Configurer les boutons comme sur le fichier index.html.twig -->
+                                            <!-- TODO: Configurer les boutons comme sur le fichier index.html -->
                                             <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Popularité</a></li>
                                             <li><a href="#"><i class="cv cvicon-cv-calender"></i> Plus récent</a></li>
                                         </ul>
@@ -52,7 +52,7 @@
                             <div class="row">
                                 {% for article in articles %}
                                 <div class=" col-lg-3 col-sm-6 articleitem">
-                                    <div class="b-article">
+                                    <div class="b-article" id="monElement">
                                         <div class="v-img">
                                             <a href="{{ ('/product/' ~ article.id) }}">
                                                 <img src="{{ ('/storage/' ~ article.picture) }}" alt="">
@@ -61,9 +61,12 @@
                                         <div class="v-desc">
                                             <a href="{{ ('/product/' ~ article.id) }}">{{ article.name }}</a>
                                         </div>
-                                        <div class="v-views">
-                                            {{article.views}} vues
-                                        </div>
+                                        <div class="v-location">
+                                            <p>
+                                                <span class="left"><i class="fa fa-crosshairs"></i> {{article.lieu}}</span>
+                                                <span class="right"><i class="fa fa-eye"></i> {{article.views}}</span>
+                                            </p>
+                                        </div>                                        
                                     </div>
                                 </div>
                                 {% endfor %}

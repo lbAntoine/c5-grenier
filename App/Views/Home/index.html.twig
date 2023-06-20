@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "base.html" %}
 
 {% block title %}Accueil{% endblock %}
 
@@ -62,10 +62,16 @@
     <script type="text/javascript">
 
         function getProductsAndRender(option = ''){
+            var params = new URLSearchParams(window.location.search);
+            var recherche = params.get("recherche");
+            if(recherche == null) {
+                recherche = '';
+            }
             $.ajax({
-                url: "/api/products" + '?sort=' + option,
+                url: "/api/products" + '?sort=' + option + '&recherche=' + recherche,
             }).done(function(result) {
                 $('#articlelist').empty();
+                console.log(result);
                 for(let i = 0; i < result.length; i++){
                     renderProduct(result[i])
                 }
