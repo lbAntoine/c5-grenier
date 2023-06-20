@@ -47,10 +47,26 @@ jobs:
       #       docker/demo/demo_web.tar
       #       docker/demo/demo_db.tar
       
-      - name: Trigger deploy workflow
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{ secrets.PAT }}
-          repository: ${{ github.repository }}
-          event-type: deploy
+      # - name: Trigger deploy workflow
+      #   uses: peter-evans/repository-dispatch@v1
+      #   with:
+      #     token: ${{ secrets.PAT }}
+      #     repository: ${{ github.repository }}
+      #     event-type: deploy
           # client-payload: '{"ref": "${{ github.ref }}"}'
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RPI_HOST }}
+          username: ${{ secrets.RPI_USERNAME }}
+          key: ${{ secrets.RPI_KEY }}
+          port: ${{ secrets.RPI_PORT }}
+          script: |
+            # docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            # Execute the script on the remote server
+            /home/lbantoine/code/c5-grenier/docker/prod/deploy.sh
