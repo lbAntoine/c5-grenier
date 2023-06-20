@@ -10,9 +10,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # - name: Setup Build Image
-      #   run: docker-compose -f docker/demo/docker-compose.ci.yml build --no-cache && docker-compose up -d
-
       - name: Run Build Image
         run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
 
@@ -29,4 +26,4 @@ jobs:
         run: docker logs db-container
 
       - name: Run a curl test on app
-        run: curl http://localhost:8080/
+        run: curl http://localhost:8080/api/products?sort=
