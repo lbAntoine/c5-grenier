@@ -31,7 +31,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/
 
-COPY ../../* /var/www/html
+COPY ../../ /var/www/html/
 RUN ls -la /var/www/html && sleep 10
 
 # RUN rm -rf public/style
