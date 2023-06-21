@@ -26,6 +26,9 @@ RUN docker-php-ext-install pdo_mysql mbstring intl zip
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
+# Set the COMPOSER_ALLOW_SUPERUSER env variable
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 WORKDIR /var/www/
 
 COPY . /var/www/html
@@ -34,7 +37,7 @@ RUN ls -la /var/www/html
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/
 
-RUN composer install --no-plugins --no-scripts -d ./html
+RUN composer install -d ./html
 
 # RUN ls -la /var/www/html
 
