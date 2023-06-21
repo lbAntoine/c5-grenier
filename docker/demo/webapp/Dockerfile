@@ -36,6 +36,9 @@ ENV BRANCH_NAME=${BRANCH_NAME}
 
 RUN git clone -b ${BRANCH_NAME} https://github.com/lbantoine/c5-grenier ./html
 
+# Checking if good branch
+RUN cat ./html/.git/HEAD
+
 # RUN composer install -d /var/www/html --no-dev --no-scripts --no-progress --no-suggest --optimize-autoloader
 RUN composer install -d ./html
 
