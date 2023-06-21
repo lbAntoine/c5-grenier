@@ -2,11 +2,15 @@ name: ci-demo
 on: 
   push:
     branches:
-      - 'feature/ci-integration'
+      - develop
+      - 'feature/*'
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Print branch name
+        run: echo "Branch name ${{ github.ref }}"
+
       - name: Checkout code
         uses: actions/checkout@v2
 
