@@ -4,7 +4,7 @@ services:
   web:
       container_name: app-container
       build:
-        context: ../
+        context: .
         dockerfile: ./webapp/Dockerfile
         args:
           - BRANCH_NAME=${BRANCH_NAME}
