@@ -13,10 +13,31 @@ use App\Utility;
  */
 class Cities extends Model {
 
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */
+    public static function getAllVilles() {
+        $db = static::getDB();
+
+        $query = 'SELECT ville_id, ville_nom_reel FROM villes_france';
+
+        $query .= ' WHERE ville_departement LIKE "%%"' ;
+
+        $query .= ' ORDER BY ville_nom_reel ASC';
+                        
+        $stmt = $db->query($query);
+        
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+    
+    
     public static function search($str) {
         $db = static::getDB();
 
-        $stmt = $db->prepare('SELECT ville_id FROM villes_france WHERE ville_nom_reel LIKE :query');
+        $stmt = $db->prepare('SELECT ville_nom_reel FROM villes_france WHERE ville_nom_reel LIKE :query');
 
         $query = $str . '%';
 

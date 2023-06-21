@@ -1,0 +1,60 @@
+name: CICD_PROD
+on: 
+  push:
+    branches:
+      - 'master'
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print branch name
+        run: |
+          branch_ref="${{ github.ref }}"
+          branch_name="${branch_ref#refs/heads/}"
+          echo "Branch name is $branch_name"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Build Image
+        run: docker-compose -f docker/dev/docker-compose.ci.yml up -d
+
+      - name: Wait for service to become available
+        run: sleep 10s
+
+      - name: Get available containers
+        run: docker ps -a
+
+      - name: Logs for app
+        run: docker logs app-container
+
+      - name: Logs for db
+        run: docker logs db-container
+
+      - name: Wait for service to become available 2
+        run: sleep 30s
+
+      - name: Run a curl test on app
+        run: curl http://localhost:8080/api/cities?query
+
+      - name: Stop and remove containers
+        run: docker-compose -f docker/dev/docker-compose.ci.yml down
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-test
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.RPI_HOST }}
+          username: ${{ secrets.RPI_USERNAME }}
+          key: ${{ secrets.RPI_KEY }}
+          port: ${{ secrets.RPI_PORT }}
+          script: |
+            # docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            # Execute the script on the remote server
+            echo ${{ secrets.SUDO }} | sudo -S chmod +x /home/lbantoine/code/c5-grenier/docker/prod/deploy.sh
+            whoami
+            /home/lbantoine/code/c5-grenier/docker/prod/deploy.sh

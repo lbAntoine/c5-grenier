@@ -1,0 +1,34 @@
+version: '3.8'
+# name: "vide-grenier-en-ligne"
+services:
+  web:
+      container_name: app-container
+      build:
+        context: .
+        dockerfile: ./webapp/Dockerfile
+        args:
+          - BRANCH_NAME=${BRANCH_NAME}
+      ports:
+        - "8080:80"
+      environment:
+        - BRANCH_NAME=${BRANCH_NAME}
+      networks:
+        - vgelnetwork
+      depends_on:
+        - db
+  db:
+      container_name: db-container
+      build: ./db/
+      ports:
+        - "3306:3306"
+      networks:
+        vgelnetwork:
+          ipv4_address: 172.20.0.5
+networks:
+  vgelnetwork:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+volumes:
+  persistent:

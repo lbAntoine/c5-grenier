@@ -1,0 +1,46 @@
+name: CI_DEV
+on: 
+  push:
+    branches:
+      - develop
+      - 'feature/*'
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print branch name
+        run: |
+          branch_ref="${{ github.ref }}"
+          branch_name="${branch_ref#refs/heads/}"
+          echo "Branch name is $branch_name"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Build Image
+        run: docker-compose -f docker/dev/docker-compose.ci.yml up -d
+
+      - name: Wait for service to become available
+        run: sleep 10s
+
+      - name: Get available containers
+        run: docker ps -a
+
+      - name: Logs for app
+        run: docker logs app-container
+
+      - name: Logs for db
+        run: docker logs db-container
+
+      - name: Wait for service to become available 2
+        run: sleep 30s
+
+      - name: Run a curl test on app
+        run: curl http://localhost:8080/api/cities?query
+
+      # - name: Run tests
+      #   run: docker-compose -f docker/demo/docker-compose.ci.yml run --rm test
+
+      - name: Stop and remove containers
+        run: docker-compose -f docker/dev/docker-compose.ci.yml down

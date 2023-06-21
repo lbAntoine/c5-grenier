@@ -1,0 +1,171 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="content-wrapper upload-page edit-page">
+
+    <!-- channel -->
+    <div class="container-fluid statistiques">
+        <div class="row">
+            <h1>
+                Statistiques
+            </h1>
+        </div>
+    </div>
+    <!-- ///channel -->
+
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cb-content">
+                        <div class="row" id="articlelist">
+                            <!-- Ici s'affiche tous les articles de la page-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+
+    const labels = {
+        "adminsNumber": "Nombre d'admins",
+        "articlesNumber": "Nombre d'articles",
+        "authorsNumber": "Nombre d'auteurs",
+        "averageViews": "Moyenne des vues",
+        "count": "Nombre de publications",
+        "date": "Dates",
+        "publicationsDates": "Publications par date",
+        "totalViews": "Total des vues",
+        "usersNumber": "Nombre d'utilisateurs",
+    };
+
+    Chart.defaults.color = '#FFF';
+    Chart.defaults.borderColor = '#36A2EB';
+
+    const dayDuration = 86400000;
+
+    function getStatsAndRender(option = '') {
+        $.ajax({
+            url: "/api/stats",
+        }).done(function (result) {
+            $('#stats-list').empty();
+            for (const property in result) {
+                if (typeof result[property] === "string") {
+                    renderStat(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+                } else {
+                    renderChart(property, labels[property] ?? property, result[property]);
+                }
+            }
+        });
+    }
+
+    /**
+     * TODO: Centrer et agrandir le texte dans la div colorée + changer la couleur de fond */
+    function renderStat(labelText, statValue) {
+        $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
+            '                                <div class="b-article">' +
+            '                                    <div class="v-img bg-primary text-white text-center d-flex align-items-center">' +
+            '                                        <p class="display-1">' + statValue + '</p>' +
+            '                                    </div>' +
+            '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
+            '                                        <p>' + labelText + '</p>' +
+            '                                    </div>' +
+            '                                    </div>' +
+            '                                        <div class="v-views col-sm-3 col-xs-2">' +
+            '                                           ' + statValue +
+            '                                        </div>' +
+            '                                    </div>' +
+            '                                </div>')
+            .appendTo($('#stats-list'));
+    }
+
+    function renderChart(chartName, labelText, data) {
+        data = fillDateList(data);
+        data = truncateData(data);
+        /**
+         * TODO: Mettre le CSS dans un fichier dédié */
+        $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
+            '                                <div class="b-article">' +
+            '                                    <div id="inGeneration" class="v-img bg-primary text-white text-center d-flex align-items-center" style="overflow-x: auto; overflow-y: hidden;">' +
+            '                                        <div class="display-1" style="width:2000%; height: 100%;">' +
+            '                                           <canvas id="' + chartName + '"></canvas>' +
+            '                                        </div>' +
+            '                                    </div>' +
+            '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
+            '                                        <p>' + labelText + '</p>' +
+            '                                    </div>' +
+            '                                </div>')
+            .appendTo($('#stats-list'));
+
+        const ctx = document.getElementById(chartName);
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.map(e => new Date(e.date).toLocaleDateString()),
+                datasets: [{
+                    label: labels[chartName],
+                    data: data.map(e => e.count),
+                    borderColor: '#FFFFFF',
+                    backgroundColor: '#FFFFFF'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `Publications le ${new Intl.DateTimeFormat("fr", { dateStyle: "full" }).format(new Date(new Date() - (365 - context.parsed.x) * dayDuration))} : ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            precision: 0
+                        }
+
+                    }
+                },
+            }
+        });
+        inGeneration.scrollLeft = inGeneration.scrollWidth;
+        inGeneration.removeAttribute("id");
+    }
+
+    function fillDateList(data) {
+        let minimumTS = Math.min(...data.map(e => new Date(e.date) / dayDuration));
+        let maximumTS = new Date() / dayDuration;
+        let filledDateList = [];
+        for (i = 0; i < maximumTS - minimumTS; i++) {
+            filledDateList[i] = { date: (minimumTS + i) * dayDuration, count: 0 };
+        }
+        data.forEach(e => {
+            filledDateList[new Date(e.date) / dayDuration - minimumTS].count = Number.parseInt(e.count);
+        });
+        return filledDateList;
+    }
+
+    function truncateData(data) {
+        return data.splice(data.length - 366);
+    }
+
+    $(document).ready(function () {
+        getStatsAndRender();
+    });
+</script>
+{% endblock %}

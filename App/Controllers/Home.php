@@ -13,14 +13,13 @@ class Home extends \Core\Controller
 {
 
     /**
-     * Affiche la page d'accueil
+     * AFFICHE LA PAGE D'ACCUEIL
      *
      * @return void
      * @throws \Exception
      */
     public function indexAction()
     {
-
-        View::renderTemplate('Home/index.html', []);
+         View::renderTemplate('Home/index.html.twig');
     }
 }

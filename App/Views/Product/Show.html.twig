@@ -1,0 +1,206 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Produit{% endblock %}
+
+{% block body %}
+
+<div class="content-wrapper single-article mt-40">
+    <div class="container">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-lg-8 col-xs-12 col-sm-12">
+                <a target="_blank" href="{{ ('/storage/' ~ article.picture) }}">
+                    <div class="preview-article">
+                        <img src="{{ ('/storage/' ~ article.picture) }}"/>
+                    </div>
+                </a>
+
+                <h1><a href="#">{{article.name}}</a></h1>
+                <p class="date_publi">Date de publication&nbsp;: {{article.published_date|date('d/m/Y')}}</p>
+
+                <!--<div class="author">
+                    <div class="author-head">
+                        <div class="sv-name">
+                            <a href="#">{{ article.username }}</a>
+                        </div>
+                    </div>
+                    <div class="author-border"></div>
+                    <div class="sv-views">
+                        <div class="sv-views-count">
+                            {{ article.views }} vues
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>-->
+
+                <div class="user-telephone">
+                    <div class="user-column column1">
+                        <div class="user-img">
+                            <div class="user-inner">
+                                <img src="https://images.unsplash.com/photo-1492288991661-058aa541ff43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-column column2">
+                        <p class="user-name">{{article.username}}</p>
+                        <p class="user-location">
+                            <i class="fa fa-crosshairs"></i>
+                            <span>{{article.lieu}}</span>
+                        </p>
+                    </div>
+                    <div class="user-column column3">
+                        <p class="user-views">
+                            <i class="fa fa-eye"></i>
+                            <span>{{article.views}}</span>
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="info">
+                    <div class="info-content">
+                        <h4>Description:</h4>
+                        <p>{{article.description}}</p>
+                    </div>
+                    <div class="u-area mt-small">
+                        {% if session.flash %}
+                            <div class="alert-{{ session.flash.type}} alert" id="flash">
+                                {{ session.flash.message }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+                <div class="mobile-contact">
+                    <div class="border-contact">
+                        <div class="contacter-user">
+                            <a name="submit" href="" class="container btn btn-primary u-btn" data-toggle="modal" data-target="#modalContactForm">Contacter {{article.username}}</a>
+                        </div>
+                    </div>
+                </div>
+ 
+                <!-- Formulaire de contact -->
+                <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+
+                            <div class="row justify-content-center">
+                                <div class="col-lg-12 col-xl-8">
+                                    <div class="contact-header text-center">
+                                        <h2 class="title">{{article.username}}
+                                            <span class="dot"></span>
+                                            <span class="big-title">CONTACT</span>
+                                        </h2>
+                                        <p class="description">Envoyez un message à {{article.username}} pour obtenir des informations complémentaires concernant son annonce du : {{article.name}} !</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-contact">
+                                <form action="" method="post" enctype="multipart/form-data" onsubmit="return validateContactForm()" class="modal-body mx-3">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="contact-input">
+                                                <i class="fa fa-user"></i>
+                                                <input type="text" id="name" name="name" placeholder="NOM PRENOM">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="contact-input">
+                                                <i class="fa fa-envelope"></i>
+                                                <input type="text" id="email" name="email" placeholder="ADRESSE MAIL">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="contact-input">
+                                                <i class="fa fa-check"></i>
+                                                <input type="text" id="subject" name="subject" placeholder="ENTRER LE SUJET">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="contact-input">
+                                                <i class="fa fa-commenting"></i>
+                                                <textarea name="comment" id="message" placeholder="ENTRER VOTRE MESSAGE"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="contact-submit text-center">
+                                                <input type="submit" name="submit" value="ENVOYER">
+                                            </div>
+                                        </div>
+                                    </div>    
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- right column -->
+            <div  class="col-lg-4 col-xs-12 col-sm-12 hidden-xs">
+
+                <div class="user">
+                    <div class="img-user">
+                        <div class="inner-user">
+                            <img src="https://images.unsplash.com/photo-1492288991661-058aa541ff43?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" alt="">
+                        </div>
+                    </div>
+                    <div class="name">{{article.username}}</div>
+                    <div class="buttons">
+                        <button data-toggle="modal" data-target="#modalContactForm">
+                            Contacter {{article.username}}
+                        </button>
+                    </div>
+                    <div class="info-user">
+                        <div class="row">
+                            <i class="fa fa-crosshairs"></i>
+                            <span>{{article.lieu}}</span>
+                        </div>
+                        <div class="row">
+                            <i class="fa fa-eye"></i>
+                            <span>{{article.views}}</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="list">
+                    <p>Vous aimerez peut-être...</p>
+                    <div class="h-article row">
+                        {% for suggestion in suggestions %}
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="v-desc col-lg-9 col-xs-10">
+                                <a href="{{ ('/product/' ~ suggestion.id) }}">{{suggestion.name}}</a>
+                            </div>
+                            <div class="v-views col-lg-3 col-xs-2">
+                                {{ suggestion.views}} vues
+                            </div>
+                            <hr class="separation">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- END up next -->
+            </div>
+
+        </div>
+    
+    </div>
+
+    
+    
+</div>
+
+<div class="container">
+    <div class="row">
+        
+    </div>
+</div>
+
+
+
+{% endblock body %}
