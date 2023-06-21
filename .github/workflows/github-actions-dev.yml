@@ -1,4 +1,4 @@
-name: ci-demo
+name: CI_DEV
 on: 
   push:
     branches:
@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Build Image
-        run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
+        run: docker-compose -f docker/dev/docker-compose.ci.yml up -d
 
       - name: Wait for service to become available
         run: sleep 10s

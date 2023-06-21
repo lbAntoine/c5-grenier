@@ -10,8 +10,6 @@ services:
           - BRANCH_NAME=${BRANCH_NAME}
       ports:
         - "8080:80"
-      # volumes:
-      #   - .:/var/www/html/
       environment:
         - BRANCH_NAME=${BRANCH_NAME}
       networks:
@@ -21,16 +19,8 @@ services:
   db:
       container_name: db-container
       build: ./db/
-      # image: mysql:8.0
-      # environment:
-      #   MYSQL_ROOT_PASSWORD: 653rag9T
-      #   MYSQL_DATABASE: videgrenierenligne
-      #   MYSQL_USER: webapplication
-      #   MYSQL_PASSWORD: 653rag9T
       ports:
         - "3306:3306"
-      # volumes:
-      #   - ./sql/import.sql:/docker-entrypoint-initdb.d/data.sql
       networks:
         vgelnetwork:
           ipv4_address: 172.20.0.5

@@ -1,8 +1,8 @@
-name: ci-dev
+name: CICD_PROD
 on: 
   push:
     branches:
-      - 'feature/ci-integration'
+      - 'main'
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -33,27 +33,6 @@ jobs:
 
       - name: Stop and remove containers
         run: docker-compose -f docker/demo/docker-compose.ci.yml down
-
-      # - name: Export Docker images
-      #   run: |
-      #     docker save -o docker/demo/demo_web.tar app
-      #     docker save -o docker/demo/demo_db.tar db
-
-      # - name: Upload Docker images
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: docker-images
-      #     path: |
-      #       docker/demo/demo_web.tar
-      #       docker/demo/demo_db.tar
-      
-      # - name: Trigger deploy workflow
-      #   uses: peter-evans/repository-dispatch@v1
-      #   with:
-      #     token: ${{ secrets.PAT }}
-      #     repository: ${{ github.repository }}
-      #     event-type: deploy
-          # client-payload: '{"ref": "${{ github.ref }}"}'
   
   deploy:
     runs-on: ubuntu-latest

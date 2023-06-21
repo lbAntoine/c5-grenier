@@ -39,8 +39,6 @@ RUN ls -la /var/www && sleep 10
 
 RUN composer install -d ./html
 
-# RUN ls -la /var/www/html
-
 RUN chown -R www-data:www-data /var/www/html/public
 
 # Configurez Apache pour utiliser le dossier "public" comme document root
