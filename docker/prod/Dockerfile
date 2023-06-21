@@ -31,7 +31,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www/
 
-COPY ../../ /var/www/html/
+COPY /home/lbantoine/code/c5-grenier /var/www/html
 RUN ls -la /var/www/html && sleep 10
 
 # RUN rm -rf public/style
