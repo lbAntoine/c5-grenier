@@ -97,8 +97,8 @@
                     $.ajax({
                         url: "/api/Cities" + '?query=' + ville_rech,
                         success: function(response) {
+                            console.log(response)
                             $liste_villes = response;
-                            console.log($liste_villes);
                         }
                     });
                 }
