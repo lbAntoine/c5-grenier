@@ -7,11 +7,18 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
+      - name: Print branch name
+        run: |
+          branch_ref="${{ github.ref }}"
+          branch_name="${branch_ref#refs/heads/}"
+          echo "Branch name is $branch_name"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Run Build Image
-        run: docker-compose -f docker/demo/docker-compose.ci.yml up -d
+        run: docker-compose -f docker/dev/docker-compose.ci.yml up -d
 
       - name: Wait for service to become available
         run: sleep 10s
@@ -32,7 +39,7 @@ jobs:
         run: curl http://localhost:8080/api/cities?query
 
       - name: Stop and remove containers
-        run: docker-compose -f docker/demo/docker-compose.ci.yml down
+        run: docker-compose -f docker/dev/docker-compose.ci.yml down
   
   deploy:
     runs-on: ubuntu-latest

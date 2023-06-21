@@ -43,4 +43,4 @@ jobs:
       #   run: docker-compose -f docker/demo/docker-compose.ci.yml run --rm test
 
       - name: Stop and remove containers
-        run: docker-compose -f docker/demo/docker-compose.ci.yml down
+        run: docker-compose -f docker/dev/docker-compose.ci.yml down
