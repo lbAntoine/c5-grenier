@@ -3,11 +3,16 @@ version: '3.8'
 services:
   web:
       container_name: app-container
-      build: ./webapp/
+      build:
+        dockerfile: ./webapp/Dockerfile
+        args:
+          - BRANCH_NAME=${BRANCH_NAME}
       ports:
         - "8080:80"
       # volumes:
       #   - .:/var/www/html/
+      environment:
+        - BRANCH_NAME=${BRANCH_NAME}
       networks:
         - vgelnetwork
       depends_on:

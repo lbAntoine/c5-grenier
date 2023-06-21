@@ -13,6 +13,7 @@ jobs:
           branch_ref="${{ github.ref }}"
           branch_name="${branch_ref#refs/heads/}"
           echo "Branch name is $branch_name"
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v2
