@@ -34,7 +34,7 @@ RUN ls -la /var/www/html
 # RUN rm -rf public/style
 # COPY --from=scss-processor ~/style public/
 
-RUN composer install -d ./html
+RUN composer install --no-interactive --no-plugins --no-scripts -d ./html
 
 # RUN ls -la /var/www/html
 
