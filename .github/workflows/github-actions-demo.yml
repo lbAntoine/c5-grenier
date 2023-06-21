@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print branch name
-        run: echo "Branch name ${ GITHUB_REF#refs/heads/ }"
+        run: echo "Branch name ${{ github.ref#refs/heads/ }}"
 
       - name: Checkout code
         uses: actions/checkout@v2
