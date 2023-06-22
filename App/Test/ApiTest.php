@@ -2,11 +2,10 @@
 
 namespace App\Test;
 
+
 use PHPUnit\Framework\TestCase;
 use App\Controllers\Api;
-use App\Models\Articles;
-use App\Models\Cities;
-use App\Models\Stats;
+
 
 class ApiTest extends TestCase
 {
@@ -42,9 +41,8 @@ class ApiTest extends TestCase
 
     public function testCitiesAction()
     {
-        // Crée une instance de la classe Api
         $api = new Api([]);
-        $_GET['query'] = "";
+        $_GET['query'] = "pa";
 
         // Capture de la sortie générée par la méthode CitiesAction()
         ob_start();

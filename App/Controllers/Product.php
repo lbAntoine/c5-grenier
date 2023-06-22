@@ -24,9 +24,7 @@ class Product extends \Core\Controller
 
             try {
                 // Stocke les données soumises dans la variable $f
-                $f = $_POST;
-
-                // TODO: Validation des données soumises
+                $f = array_map('htmlspecialchars', $_POST);
 
                 // Ajoute l'ID de l'utilisateur actuellement connecté aux données soumises
                 $f['user_id'] = $_SESSION['user']['id'];
