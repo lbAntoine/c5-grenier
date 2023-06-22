@@ -114,8 +114,6 @@ class Stats extends Model {
      * @access public
      * @return string|boolean
      * @throws Exception
-     */
-    /**
      * @OA\Schema(
      *  schema="PublicationsDates",
      *  description="Pairs of values composed of a date on which at least one article was submitted, and the number of submission on that day",
