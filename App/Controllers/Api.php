@@ -41,6 +41,15 @@ class Api extends \Core\Controller
      *      ),
      *      required=true
      *  ),
+     *  @OA\Parameter(
+     *      name="recherche",
+     *      in="query",
+     *      description="the name of an article or a substring of it",
+     *      @OA\Schema(
+     *          type="string"
+     *      ),
+     *      required=true
+     *  ),
      *  @OA\Response(
      *      response="200",
      *      description="Products response",

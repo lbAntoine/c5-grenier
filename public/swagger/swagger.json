@@ -28,6 +28,15 @@
                                 "views"
                             ]
                         }
+                    },
+                    {
+                        "name": "recherche",
+                        "in": "query",
+                        "description": "the name of an article or a substring of it",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
