@@ -38,6 +38,9 @@ jobs:
       - name: Run a curl test on app
         run: curl http://localhost:8080/api/cities?query
 
+      - name: Run tests
+        run: docker exec app-container ./html/vendor/bin/phpunit --verbose ./html/App/Test/ApiTest --stderr
+
       - name: Stop and remove containers
         run: docker-compose -f docker/dev/docker-compose.ci.yml down
   
