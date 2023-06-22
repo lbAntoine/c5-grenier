@@ -336,10 +336,6 @@ label.clipboard {
   height: 46px;
   padding-top: 18px; }
 
-.login-window button {
-  padding-top: 22px;
-  padding-bottom: 16px; }
-
 input:focus,
 select:focus,
 textarea:focus {
@@ -603,6 +599,9 @@ video {
   display: flex;
   align-items: center;
   justify-content: center; }
+  @media only screen and (max-width: 767px) {
+    .account-header {
+      padding-top: 115px; } }
   .account-header h1 {
     font-size: 5rem;
     color: white; }
@@ -672,6 +671,41 @@ video {
 .content-wrapper {
   background-color: #fbfdfe;
   padding-top: 72px;}
+  @media only screen and (max-width: 767px) {
+    .content-wrapper {
+      padding-top: 115px; } }
+
+
+  .content-wrapper .titreStat {
+    padding-top: 30px;
+    color: #95286d;
+    font-variant-caps: small-caps;
+    font-weight: 600;
+    font-size: 24px;
+    text-decoration: underline; }
+    @media only screen and (max-width: 767px) {
+      .content-wrapper .titreStat {
+        text-align: center; } }
+  .content-wrapper .separation {
+    width: 50%; 
+    margin-top: 52px ;}
+    @media (min-width: 767px) {
+      .content-wrapper .separation {
+        visibility: none; } }
+  .content-wrapper .stats {
+    text-align: center; }
+    .content-wrapper .stats .statValue {
+      text-align: center;
+      font-size: 25px;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      color: #4a5568; }
+    .content-wrapper .stats .statLabel {
+      color: #a0aec0;
+      padding: 1px;
+      font-size: 14px; }
+
+
 
   .content-wrapper .suggestions {
     display: none;
@@ -715,15 +749,26 @@ video {
           .content-wrapper .fade .contact-header .big-title {
             font-size: 85px; } }
 
+    .container-fluid .fade .modif-header h2 {
+      font-size: 25px; }
     .content-wrapper .fade .form-contact .contact-input {
       position: relative;
       margin-top: 40px; }
-      .content-wrapper .fade .form-contact .contact-input i {
+    .container-fluid .fade .modal-body .modif-input {
+      position: relative;
+      margin-top: 20px; }
+      .content-wrapper .fade .form-contact .contact-input i{
         position: absolute;
         top: 9px;
         left: 15px;
         color: #912b6d; }
+      .container-fluid .fade .modal-body .modif-input i {
+        position: absolute;
+        top: 19px;
+        left: 15px;
+        color: #912b6d; }
       .content-wrapper .fade .form-contact .contact-input input,
+      .container-fluid .fade .modal-body .modif-input input,
       .content-wrapper .fade .form-contact .contact-input textarea {
         width: 100%;
         border: none;
@@ -734,12 +779,15 @@ video {
         font-weight: 700;
         transition: border .3s; }
       .content-wrapper .fade .form-contact .contact-input input::placeholder,
+      .container-fluid .fade .modal-body .modif-input input::placeholder,
       .content-wrapper .fade .form-contact .contact-input textarea::placeholder {
         color: rgba(7, 57, 92, .3); }
       .content-wrapper .fade .form-contact .contact-input input:focus,
+      .container-fluid .fade .modal-body .modif-input input:focus,
       .content-wrapper .fade .form-contact .contact-input textarea:focus {
         border-color: #912b6d; }
-      .content-wrapper .fade .form-contact .contact-submit input {
+      .content-wrapper .fade .form-contact .contact-submit input,
+      .container-fluid .fade .modal-body .modif-submit input {
         margin-top: 40px;
         padding: 20px 50px 15px 50px;
         background-color: #b0306e;
@@ -747,7 +795,11 @@ video {
         border: none;
         font-weight: 700;
         transition: background-color .3s; }
-      .content-wrapper .fade .form-contact .contact-submit input:hover {
+      .container-fluid .fade .modal-body .modif-submit input {
+        padding: 20px 50px 35px 50px;
+      }
+      .content-wrapper .fade .form-contact .contact-submit input:hover,
+      .container-fluid .fade .modal-body .modif-submit input:hover {
         background-color: #07395c; }
       
   .content-wrapper .container .titleReglement {
@@ -1287,6 +1339,9 @@ ul.menu {
 
 .topsearch {
   margin-top: 15px; }
+  @media only screen and (max-width: 767px) {
+    .topsearch {
+      margin-top: 0; } }
   .topsearch > i {
     display: none; }
   .topsearch .form-control {
@@ -1344,7 +1399,9 @@ ul.menu {
     display: -moz-box;
     display: -ms-flexbox;
     display: -webkit-flex;
-    display: flex; } }
+    display: flex; }
+    .navbar-container .recherche {
+      padding-bottom: 5px; } }
 
 @media only screen and (max-width: 767px) {
   .navbar-container > .container {
@@ -1434,7 +1491,7 @@ ul.menu {
     .navbar-brand span {
       margin-left: 10px;
       margin-top: 4px;
-      font-size: 14px;
+      font-size: 16px;
       color: #ea2c5a;
       font-weight: bold; } }
 
@@ -1824,9 +1881,6 @@ footer {
       .bg-image img {
         display: none !important; } }
 
-.login-wraper {
-  position: relative; 
-  padding-top: 72px; }
   @media (min-width: 100px) and (max-width: 1365px) {
     .login-wraper {
       background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(/images/login.jpg);

@@ -58,30 +58,46 @@
                             <p class="rejoindre">Envie de nous rejoindre ? <span class="signuptext"><a href="/register">Inscription</a></span></p>
                         </div>
                     </form>
+
                     <!-- Modal -->
                     <div class="modal fade" id="mdpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Récupération de mot de passe</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-12 col-xl-8">
+                                        <div class="modif-header text-center">
+                                            <h2>
+                                                Récupération du mot de passe
+                                            </h2>
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div class="modal-body">
-                                    <form action="/forgot" method="post">
-                                        <label for="emailRecuperation">Email</label>
-                                        <input type="email" class="form-control" id="emailRecuperation" name="emailRecuperation"
-                                               placeholder="sample@gmail.com">
-                                        <button type="submit" name="submit" class="btn btn-cv1">Envoyer le lien</button>
+                                    <form action="/forgot" method="post" class="modal-body mx-3">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="modif-input">
+                                                    <i class="fa fa-envelope"></i>
+                                                    <input type="email" id="emailRecuperation" name="emailRecuperation" placeholder="ADRESSE MAIL">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="modif-submit text-center">
+                                                    <input type="submit" name="submit" value="ENVOYER">
+                                                </div>
+                                            </div>
+                                        </div>    
                                     </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

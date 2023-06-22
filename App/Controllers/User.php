@@ -309,7 +309,6 @@ class User extends \Core\Controller
      */
     public function logoutAction() {
 
-
         if (isset($_COOKIE['uname'])){
             //  Supprimer le cookie de rappel de l'utilisateur s'il a été stocké.
             $user = \App\Models\User::getByCookie($_COOKIE['uname']);
