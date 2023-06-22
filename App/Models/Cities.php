@@ -8,8 +8,10 @@ use App\Core;
 use Exception;
 use App\Utility;
 
+use OpenApi\Annotations as OA;
+
 /**
- * City Model:
+ * City Model
  */
 class Cities extends Model {
 

@@ -1,0 +1,194 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Vide grenier en ligne",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080/api",
+            "description": "API du site 'Vide grenier en ligne'."
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "summary": "AFFICHE LA LISTE DES ARTICLES ET PRODUITS POUR LA PAGE D'ACCUEIL",
+                "operationId": "6cd0e1227267af9ea35e5694f447653a",
+                "parameters": [
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "the order in which the articles should be displayed",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "date",
+                                "views"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "recherche",
+                        "in": "query",
+                        "description": "the name of an article or a substring of it",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Article"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cities": {
+            "get": {
+                "summary": "RECHERCHE DANS LA LISTE DES VILLES",
+                "operationId": "0014f0c235fa91f011782d3b517393ea",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "A city's real name or its begining",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cities response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/stats": {
+            "get": {
+                "summary": "RÉCUPÈRE LES STATS",
+                "operationId": "2d0691dd114c6ee8f73273ce527408d3",
+                "responses": {
+                    "200": {
+                        "description": "Stats response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Stats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Article": {
+                "description": "Article available to be given",
+                "properties": {
+                    "id": {
+                        "description": "ID of the article in the database",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Name of the article",
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "published_date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "user_id": {
+                        "type": "string"
+                    },
+                    "views": {
+                        "type": "string"
+                    },
+                    "picture": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Stats": {
+                "description": "Various stats computed from the database contents",
+                "properties": {
+                    "articlesNumber": {
+                        "description": "The number of articles available",
+                        "type": "string"
+                    },
+                    "totalViews": {
+                        "description": "The total number of views on all the articles",
+                        "type": "string"
+                    },
+                    "averageViews": {
+                        "description": "The average number of views on all the articles",
+                        "type": "string"
+                    },
+                    "authorsNumber": {
+                        "description": "The number of account with at least one submitted article",
+                        "type": "string"
+                    },
+                    "usersNumber": {
+                        "description": "The number of registered accounts",
+                        "type": "string"
+                    },
+                    "adminsNumber": {
+                        "description": "The number of account with the admin role",
+                        "type": "string"
+                    },
+                    "publicationsDates": {
+                        "description": "A list of all the dates with at least one submission and their submissions counts",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicationsDates"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "PublicationsDates": {
+                "description": "Pairs of values composed of a date on which at least one article was submitted, and the number of submission on that day",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "count": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}
