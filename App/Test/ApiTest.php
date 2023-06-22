@@ -54,7 +54,7 @@ class ApiTest extends TestCase
         $data = json_decode($output, true);
         $this->assertIsArray($data);
         // Vérifie la réponse HTTP 200
-        $this->assertEquals(400, http_response_code());
+        $this->assertEquals(200, http_response_code());
 
         // Vérifie que la réponse est un tableau de chaînes
         $decodedOutput = json_decode($output, true);
