@@ -15,17 +15,45 @@
     </div>
     <!-- ///channel -->
 
-    <div class="content-wrapper">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="cb-content">
-                        <div class="row" id="articlelist">
-                            <!-- Ici s'affiche tous les articles de la page-->
-                        </div>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-6">
+                <div class="cb-content">
+
+                    <h4 class="titreStat">Statistiques Utilisateurs</h4>
+                    <div class="row" id="stats-users">
+                        <!-- Ici s'affiche les statistiques en lien avec les utilisateurs -->
                     </div>
+
+                    <hr class="visible-xs separation">
+
+                    <h4 class="titreStat">Statistiques Articles</h4>
+                    <div class="row" id="stats-articles">
+                        <!-- Ici s'affiche les statistiques en lien avec les articles -->
+                    </div>
+
+                    <hr class="visible-xs separation">
+
+                    <h4 class="titreStat">Statistiques Vues</h4>
+                    <div class="row" id="stats-vues">
+                        <!-- Ici s'affiche les statistiques en lien avec les vues -->
+                    </div>
+
                 </div>
             </div>
+
+            <div class="col-lg-6">
+                <div class="cb-content">
+
+                    <h4 class="titreStat">Nombre d'articles entre 2018 et 2023</h4>
+                    <div class="row">
+                        <canvas id="graph"></canvas>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -39,133 +67,207 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 
+
+
+            
+
+
     const labels = {
-        "adminsNumber": "Nombre d'admins",
-        "articlesNumber": "Nombre d'articles",
-        "authorsNumber": "Nombre d'auteurs",
-        "averageViews": "Moyenne des vues",
-        "count": "Nombre de publications",
-        "date": "Dates",
-        "publicationsDates": "Publications par date",
+        "adminsNumber": "Nb Administrateu(s)",  
+        "usersNumber": "Nb Utilisateurs",
+        
+        "articlesNumber": "Nb Articles",      
+        "authorsNumber": "Nb Auteurs", 
+
+        "averageViews": "Moyenne des vues",         
         "totalViews": "Total des vues",
-        "usersNumber": "Nombre d'utilisateurs",
     };
 
-    Chart.defaults.color = '#FFF';
-    Chart.defaults.borderColor = '#36A2EB';
-
-    const dayDuration = 86400000;
-
-    function getStatsAndRender(option = '') {
+    /* Information Utilisateurs */
+    function getStatsUsersAndRender() {
         $.ajax({
-            url: "/api/stats",
+            url: "/api/StatsUsers",
         }).done(function (result) {
-            $('#stats-list').empty();
+            $('#stats-users').empty();
             for (const property in result) {
-                if (typeof result[property] === "string") {
-                    renderStat(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+                renderStatsUsers(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+            }
+        });
+    }
+    function renderStatsUsers(labelText, statValue) {
+        $('<div class="col-lg-4 col-xs-6 stats">' +
+            '   <div class="statValue">' +
+            '       <div>' +
+            '           ' + statValue +
+            '       </div>' +
+            '   </div>' +
+            '   <div class="statLabel">' +
+            '       <div>' +
+            '           ' + labelText +
+            '       </div>' +
+            '   </div>' +
+          '</div>')
+            .appendTo($('#stats-users'));
+    }
+
+
+    /* Information Articles */
+    function getStatsArticlesAndRender() {
+        $.ajax({
+            url: "/api/StatsArticles",
+        }).done(function (result) {
+            $('#stats-articles').empty();
+            for (const property in result) {
+                renderStatsArticles(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+            }
+        });
+    }
+    function renderStatsArticles(labelText, statValue) {
+        $('<div class="col-lg-4 col-xs-6 stats">' +
+            '   <div class="statValue">' +
+            '       <div>' +
+            '           ' + statValue +
+            '       </div>' +
+            '   </div>' +
+            '   <div class="statLabel">' +
+            '       <div>' +
+            '           ' + labelText +
+            '       </div>' +
+            '   </div>' +
+          '</div>')
+            .appendTo($('#stats-articles'));
+    }
+
+
+    /* Information Vues */
+    function getStatsVuesAndRender() {
+        $.ajax({
+            url: "/api/StatsVues",
+        }).done(function (result) {
+            $('#stats-vues').empty();
+            for (const property in result) {
+                renderStatsVues(labels[property] ?? property, Number.parseFloat(result[property]).toLocaleString());
+            }
+        });
+    }
+    function renderStatsVues(labelText, statValue) {
+        $('<div class="col-lg-4 col-xs-6 stats">' +
+            '   <div class="statValue">' +
+            '       <div>' +
+            '           ' + statValue +
+            '       </div>' +
+            '   </div>' +
+            '   <div class="statLabel">' +
+            '       <div>' +
+            '           ' + labelText +
+            '       </div>' +
+            '   </div>' +
+          '</div>')
+            .appendTo($('#stats-vues'));
+    }
+
+    /* Informations et construction du graph */
+    function getStatsGraphAndRender() {
+        $.ajax({
+            url: "/api/StatsGraph",
+        }).done(function (result) {
+            console.log(result);
+
+            // Créer les tableaux pour les labels des axes X et Y
+            var annees = [];
+            var mois = ['Jan.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sep.', 'Oct.', 'Nov.', 'Déc.'];
+            var nbArticles_2018 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var nbArticles_2019 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var nbArticles_2020 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var nbArticles_2021 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var nbArticles_2022 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var nbArticles_2023 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            for (const property in result) {                
+                if((result[property].Annees == 2018)) {
+                    nbArticles_2018[result[property].Mois-1] = result[property].Nombre_Articles;
+                } else if((result[property].Annees == 2019)) {
+                    nbArticles_2019[result[property].Mois-1] = result[property].Nombre_Articles;
+                } else if((result[property].Annees == 2020)) {
+                    nbArticles_2020[result[property].Mois-1] = result[property].Nombre_Articles;
+                } else if((result[property].Annees == 2021)) {
+                    nbArticles_2021[result[property].Mois-1] = result[property].Nombre_Articles;
+                } else if((result[property].Annees == 2022)) {
+                    nbArticles_2022[result[property].Mois-1] = result[property].Nombre_Articles;
                 } else {
-                    renderChart(property, labels[property] ?? property, result[property]);
+                    nbArticles_2023[result[property].Mois-1] = result[property].Nombre_Articles;
                 }
             }
-        });
-    }
 
-    /**
-     * TODO: Centrer et agrandir le texte dans la div colorée + changer la couleur de fond */
-    function renderStat(labelText, statValue) {
-        $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
-            '                                <div class="b-article">' +
-            '                                    <div class="v-img bg-primary text-white text-center d-flex align-items-center">' +
-            '                                        <p class="display-1">' + statValue + '</p>' +
-            '                                    </div>' +
-            '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
-            '                                        <p>' + labelText + '</p>' +
-            '                                    </div>' +
-            '                                    </div>' +
-            '                                        <div class="v-views col-sm-3 col-xs-2">' +
-            '                                           ' + statValue +
-            '                                        </div>' +
-            '                                    </div>' +
-            '                                </div>')
-            .appendTo($('#stats-list'));
-    }
-
-    function renderChart(chartName, labelText, data) {
-        data = fillDateList(data);
-        data = truncateData(data);
-        /**
-         * TODO: Mettre le CSS dans un fichier dédié */
-        $('<div class="col-lg-4 col-sm-6 col-xs-12 articleitem" id="article-pattern">' +
-            '                                <div class="b-article">' +
-            '                                    <div id="inGeneration" class="v-img bg-primary text-white text-center d-flex align-items-center" style="overflow-x: auto; overflow-y: hidden;">' +
-            '                                        <div class="display-1" style="width:2000%; height: 100%;">' +
-            '                                           <canvas id="' + chartName + '"></canvas>' +
-            '                                        </div>' +
-            '                                    </div>' +
-            '                                    <div class="col-sm-9 col-xs-10"><div class="v-desc">' +
-            '                                        <p>' + labelText + '</p>' +
-            '                                    </div>' +
-            '                                </div>')
-            .appendTo($('#stats-list'));
-
-        const ctx = document.getElementById(chartName);
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(e => new Date(e.date).toLocaleDateString()),
-                datasets: [{
-                    label: labels[chartName],
-                    data: data.map(e => e.count),
-                    borderColor: '#FFFFFF',
-                    backgroundColor: '#FFFFFF'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return `Publications le ${new Intl.DateTimeFormat("fr", { dateStyle: "full" }).format(new Date(new Date() - (365 - context.parsed.x) * dayDuration))} : ${context.parsed.y}`;
-                            }
+            // Créer le graphe avec Chart.js
+            var ctx = document.getElementById('graph').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: mois,
+                    datasets: [
+                        {
+                            label: '2018',
+                            data: nbArticles_2018,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2019',
+                            data: nbArticles_2019,
+                            backgroundColor: 'rgba(149, 40, 109, 0.2)',
+                            borderColor: 'rgba(149, 40, 109, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2020',
+                            data: nbArticles_2020,
+                            backgroundColor: 'rgba(206, 113, 117, 0.2)',
+                            borderColor: 'rgba(206, 113, 117, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2021',
+                            data: nbArticles_2021,
+                            backgroundColor: 'rgba(66, 186, 82, 0.2)',
+                            borderColor: 'rgba(66, 186, 82, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2022',
+                            data: nbArticles_2022,
+                            backgroundColor: 'rgba(150, 168, 64, 0.2)',
+                            borderColor: 'rgba(150, 168, 64, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: '2023',
+                            data: nbArticles_2023,
+                            backgroundColor: 'rgba(230, 186, 82, 0.2)',
+                            borderColor: 'rgba(230, 186, 82, 1)',
+                            borderWidth: 1
                         }
-                    }
+                    ]
+
                 },
-                scales: {
-                    y: {
-                        ticks: {
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
                             precision: 0
                         }
-
                     }
-                },
-            }
+                }
+            });
         });
-        inGeneration.scrollLeft = inGeneration.scrollWidth;
-        inGeneration.removeAttribute("id");
-    }
-
-    function fillDateList(data) {
-        let minimumTS = Math.min(...data.map(e => new Date(e.date) / dayDuration));
-        let maximumTS = new Date() / dayDuration;
-        let filledDateList = [];
-        for (i = 0; i < maximumTS - minimumTS; i++) {
-            filledDateList[i] = { date: (minimumTS + i) * dayDuration, count: 0 };
-        }
-        data.forEach(e => {
-            filledDateList[new Date(e.date) / dayDuration - minimumTS].count = Number.parseInt(e.count);
-        });
-        return filledDateList;
-    }
-
-    function truncateData(data) {
-        return data.splice(data.length - 366);
     }
 
     $(document).ready(function () {
-        getStatsAndRender();
+        getStatsUsersAndRender();
+        getStatsArticlesAndRender();
+        getStatsVuesAndRender();
+        getStatsGraphAndRender();
     });
 </script>
 {% endblock %}

@@ -8,8 +8,23 @@ use DateTime;
 use Exception;
 use App\Utility;
 
+use OpenApi\Annotations as OA;
+
 /**
  * Articles Model
+ * 
+ * @OA\Schema(
+ *  schema="Article",
+ *  description="Article available to be given",
+ *  @OA\Property(type="string", property="id", description="ID of the article in the database"),
+ *  @OA\Property(type="string", property="name", description="Name of the article"),
+ *  @OA\Property(type="string", property="description"),
+ *  @OA\Property(type="string", format="date", property="published_date"),
+ *  @OA\Property(type="string", property="user_id"),
+ *  @OA\Property(type="string", property="views"),
+ *  @OA\Property(type="string", property="picture")
+ *  )
+ * )
  */
 class Articles extends Model {
 
@@ -42,6 +57,25 @@ class Articles extends Model {
         
         $stmt = $db->query($query);
         
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */
+    public static function getAutour($id_user) {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT * FROM articles
+            INNER JOIN users ON articles.lieu = users.city
+            WHERE users.id = ? ');
+
+        $stmt->execute([$id_user]);
+
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -120,8 +154,6 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
-
     /**
      * ?
      * @access public
@@ -146,6 +178,12 @@ class Articles extends Model {
         return $db->lastInsertId();
     }
 
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */
     public static function attachPicture($articleId, $pictureName){
         $db = static::getDB();
 
@@ -154,11 +192,7 @@ class Articles extends Model {
         $stmt->bindParam(':picture', $pictureName);
         $stmt->bindParam(':articleid', $articleId);
 
-
         $stmt->execute();
     }
-
-
-
 
 }

@@ -96,8 +96,8 @@ class Product extends \Core\Controller
             // Affiche l'exception levée avec la fonction "var_dump"
             var_dump($e);
         }
-        // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
 
+        // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('Product/Show.html.twig', [
             'article' => $article[0],
             'suggestions' => $suggestions

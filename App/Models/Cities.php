@@ -8,8 +8,10 @@ use Core;
 use Exception;
 use App\Utility;
 
+use OpenApi\Annotations as OA;
+
 /**
- * City Model:
+ * City Model
  */
 class Cities extends Model {
 
@@ -32,8 +34,13 @@ class Cities extends Model {
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
-    
+
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */    
     public static function search($str) {
         $db = static::getDB();
 
