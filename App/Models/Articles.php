@@ -8,8 +8,23 @@ use DateTime;
 use Exception;
 use App\Utility;
 
+use OpenApi\Annotations as OA;
+
 /**
  * Articles Model
+ * 
+ * @OA\Schema(
+ *  schema="Article",
+ *  description="Article available to be given",
+ *  @OA\Property(type="string", property="id", description="ID of the article in the database"),
+ *  @OA\Property(type="string", property="name", description="Name of the article"),
+ *  @OA\Property(type="string", property="description"),
+ *  @OA\Property(type="string", format="date", property="published_date"),
+ *  @OA\Property(type="string", property="user_id"),
+ *  @OA\Property(type="string", property="views"),
+ *  @OA\Property(type="string", property="picture")
+ *  )
+ * )
  */
 class Articles extends Model {
 

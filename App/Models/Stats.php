@@ -8,8 +8,22 @@ use App\Core;
 use Exception;
 use App\Utility;
 
+use OpenApi\Annotations as OA;
+
 /**
- * Stats Model:
+ * Stats Model
+ * 
+ * @OA\Schema(
+ *  schema="Stats",
+ *  description="Various stats computed from the database contents",
+ *  @OA\Property(type="string", property="articlesNumber", description="The number of articles available"),
+ *  @OA\Property(type="string", property="totalViews", description="The total number of views on all the articles"),
+ *  @OA\Property(type="string", property="averageViews", description="The average number of views on all the articles"),
+ *  @OA\Property(type="string", property="authorsNumber", description="The number of account with at least one submitted article"),
+ *  @OA\Property(type="string", property="usersNumber", description="The number of registered accounts"),
+ *  @OA\Property(type="string", property="adminsNumber", description="The number of account with the admin role"),
+ *  @OA\Property(type="array", @OA\Items(ref="#/components/schemas/PublicationsDates"), property="publicationsDates", description="A list of all the dates with at least one submission and their submissions counts")
+ * )
  */
 class Stats extends Model {
 
@@ -40,6 +54,14 @@ class Stats extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @OA\Schema(
+     *  schema="PublicationsDates",
+     *  description="Pairs of values composed of a date on which at least one article was submitted, and the number of submission on that day",
+     *  @OA\Property(type="string", format="date", property="date"),
+     *  @OA\Property(type="string", property="count")
+     * )
+     */
     public static function fetchPublicationsDatesStats() {
         $db = static::getDB();
 
