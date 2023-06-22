@@ -4,6 +4,11 @@ on:
     branches:
       - develop
       - 'feature/*'
+  pull_request:
+    branches:
+      - develop
+      - 'feature/*'
+    types: [opened, synchronize, reopened]
 jobs:
   build-test:
     runs-on: ubuntu-latest
