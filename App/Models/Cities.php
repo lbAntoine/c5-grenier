@@ -34,8 +34,13 @@ class Cities extends Model {
         
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    
-    
+
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */    
     public static function search($str) {
         $db = static::getDB();
 

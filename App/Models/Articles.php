@@ -66,6 +66,25 @@ class Articles extends Model {
      * @return string|boolean
      * @throws Exception
      */
+    public static function getAutour($id_user) {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT * FROM articles
+            INNER JOIN users ON articles.lieu = users.city
+            WHERE users.id = ? ');
+
+        $stmt->execute([$id_user]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */
     public static function getOne($id) {
         $db = static::getDB();
 
@@ -135,8 +154,6 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
-
     /**
      * ?
      * @access public
@@ -161,6 +178,12 @@ class Articles extends Model {
         return $db->lastInsertId();
     }
 
+    /**
+     * ?
+     * @access public
+     * @return string|boolean
+     * @throws Exception
+     */
     public static function attachPicture($articleId, $pictureName){
         $db = static::getDB();
 
@@ -169,11 +192,7 @@ class Articles extends Model {
         $stmt->bindParam(':picture', $pictureName);
         $stmt->bindParam(':articleid', $articleId);
 
-
         $stmt->execute();
     }
-
-
-
 
 }

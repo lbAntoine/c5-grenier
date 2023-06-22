@@ -31,10 +31,10 @@
                 <div class="navbar-container">
                     <div class="container">
                         <div class="row">
-                            <div class="col-xs-2 visible-xs menu-phone">
+                            <div class="col-xs-4 visible-xs menu-phone">
                                 <a href="#" class="btn-menu-toggle"><i class="cv cvicon-cv-menu"></i></a>
                             </div>
-                            <div class="col-lg-1 col-sm-1 col-xs-5 menu-title" style="padding: 0;">
+                            <div class="col-lg-1 col-sm-1 col-xs-6 menu-title" style="padding: 0;">
                                 <a class="navbar-brand" href="/">
                                     <img src="/images/logo.png" alt="Vide Grenier en ligne" class="logo" />
                                     <span>Vide Grenier en ligne</span>
@@ -46,7 +46,7 @@
                                 </ul>
                             </div>
 
-                            <div class="col-lg-6 col-sm-5 col-xs-5 recherche">
+                            <div class="col-lg-6 col-sm-5 col-xs-12 recherche">
                                 <form action="?recherche=" method="get">
                                     <div class="topsearch">
                                         <i class="cv cvicon-cv-cancel topsearch-close"></i>
@@ -69,10 +69,10 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li><a href="/account">Mon compte</a></li>
-                                            <li><a href="/logout">Déconnexion</a></li>
                                             {% if user.admin %}
                                             <li><a href="/stats">Statistiques</a></li>
                                             {% endif %}
+                                            <li><a href="/logout">Déconnexion</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -125,7 +125,16 @@
                                 <p>Mon compte</p>
                             </a>
                         </li>
+                        {% if user.admin %}
+                        <li>
+                            <a href="/stats">
+                                <i class="cv cvicon-cv-star"></i>
+                                <p>Statistiques</p>
+                            </a>
+                        </li>
+                        {% endif %}
                         {% else %}
+                        
                         <li>
                             <a href="/login">
                                 <i class="cv cvicon-cv-play-circle"></i>
@@ -198,3 +207,18 @@
         {% endblock %}
     </body>
 </html>
+
+
+<script type="text/javascript">
+    // Fermer le menu lors d'un clic en dehors du menu
+    document.addEventListener('click', function(event) {
+        var target = event.target;
+        var menuToggle = document.querySelector('.btn-menu-toggle');
+        var menu = document.querySelector('.mobile-menu');
+
+        if (menu.classList.contains('open') && !menu.contains(target) && target !== menuToggle) {
+            document.body.classList.remove('ovf--hidden');
+            menu.classList.remove('open');
+        }
+    });
+</script>

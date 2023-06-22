@@ -19,10 +19,11 @@
                                             <span class="hidden-xs">À la une</span>
                                         </a>
                                     </li>
+                                    {% if user is not null %}
                                     <li>
-                                        <!-- TODO: Configurer le bouton autour de moi, ajouter la ville dans le formulaire d'inscription et le formulaire de l'annonce -->
-                                        <a href="#">Autour de moi</a>
+                                        <a onclick="getAutourAndRender({{user.id}})">Autour de moi</a>
                                     </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                             <div class="col-lg-2 col-sm-2 col-xs-4">
@@ -76,6 +77,18 @@
                     renderProduct(result[i])
                 }
             });
+        }
+
+        function getAutourAndRender(id_user = ''){
+                $.ajax({
+                    url: "/api/autour" + '?id_user=' + id_user,
+                }).done(function(result) {
+                    $('#articlelist').empty();
+                    console.log(result);
+                    for(let i = 0; i < result.length; i++){
+                        renderProduct(result[i])
+                    }
+                });
         }
 
         function renderProduct($product){
