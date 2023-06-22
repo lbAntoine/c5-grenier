@@ -47,3 +47,4 @@ Les modèles sont utilisés pour récupérer ou stocker des données dans l'appl
 $db = static::getDB();
 ```
 TEST ENCORE
+Swggaer
