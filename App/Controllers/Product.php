@@ -26,8 +26,6 @@ class Product extends \Core\Controller
                 // Stocke les données soumises dans la variable $f
                 $f = $_POST;
 
-                // TODO: Validation des données soumises
-
                 // Ajoute l'ID de l'utilisateur actuellement connecté aux données soumises
                 $f['user_id'] = $_SESSION['user']['id'];
 
@@ -98,8 +96,8 @@ class Product extends \Core\Controller
             // Affiche l'exception levée avec la fonction "var_dump"
             var_dump($e);
         }
-        // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
 
+        // Affiche la page du produit en appelant la méthode "renderTemplate" de la classe "View"
         View::renderTemplate('Product/Show.html.twig', [
             'article' => $article[0],
             'suggestions' => $suggestions

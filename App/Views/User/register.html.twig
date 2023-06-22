@@ -111,14 +111,14 @@
                     if(new RegExp("^"+ville_rech,"i").test($liste_villes[i])){
                         // On créé l'élément HTML "LI"
                         var word = document.createElement("li");
-                         // On l'ajoute au fragment
+                        // On l'ajoute au fragment
                         frag.appendChild(word);
                         // On lui mets comme contenu le mot clef avec en gras les lettres entrées (grâce à une RegEx et à la fonction replace() ^^ )
                         word.innerHTML = $liste_villes[i].replace(new RegExp("^("+ville_rech+")","i"),"<strong>$1</strong>");
-                         // On ajoute le mot clef à l'élément HTML "LI", pour pouvoir le récupérer plus tard
+                        // On ajoute le mot clef à l'élément HTML "LI", pour pouvoir le récupérer plus tard
                         word.mot = $liste_villes[i];
 
-                         // Lorsque le visiteur clique sur le lien
+                        // Lorsque le visiteur clique sur le lien
                         word.onmousedown = function(){
                             // On re-sélectionne le champ de texte					
                             input.focus();
@@ -126,7 +126,7 @@
                             input.value = this.mot;
                             // On cache la liste
                             list.style.display = "none";
-                             // On empêche la dé-sélection du champ
+                            // On empêche la dé-sélection du champ
                             return false;
                         };		
                         
