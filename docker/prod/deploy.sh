@@ -12,6 +12,7 @@ cd /home/lbantoine/code/c5-grenier &&
     # docker network prune -f &&
     # docker image prune -f &&
     # docker container prune -f &&
+    rm composer.lock &&
     docker-compose -f /home/lbantoine/code/c5-grenier/docker-compose.server.yml build &&
     docker-compose -f /home/lbantoine/code/c5-grenier/docker-compose.server.yml up -d &&
     echo "$(date '+%H:%M:%S   %d/%m/%y') -> Deployment done for commit: $(git log -1 --pretty=%B)" >> /home/lbantoine/code/c5-grenier.log

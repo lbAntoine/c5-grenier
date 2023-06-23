@@ -48,7 +48,7 @@ jobs:
 
       - name: Run a curl test
         run: |
-          response_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/blabla?query)
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/cities?query)
           if [ $response_code -ne 200 ]; then
             echo "Curl test failed with response code $response_code"
             exit 1
