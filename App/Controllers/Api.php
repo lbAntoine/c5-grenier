@@ -124,6 +124,7 @@ class Api extends \Core\Controller
         $cities = Cities::search($_GET['query']);
 
         // Envoie la réponse au format JSON
+        http_response_code(200);
         header('Content-Type: application/json');
         echo json_encode($cities);
     }

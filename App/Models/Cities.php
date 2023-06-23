@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Utility\Hash;
 use Core\Model;
-use App\Core;
+use Core;
 use Exception;
 use App\Utility;
 

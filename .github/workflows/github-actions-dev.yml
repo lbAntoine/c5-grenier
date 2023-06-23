@@ -6,6 +6,13 @@ on:
       - 'feature/*'
       - 'release/*'
       - 'hotfix/*'
+  # pull_request:
+  #   branches:
+  #     - develop
+  #     - 'feature/*'
+  #     - 'release/*'
+  #     - 'hotfix/*'
+  #     - master
 
 jobs:
   build-test:
@@ -39,11 +46,17 @@ jobs:
       - name: Wait for service to become available 2
         run: sleep 30s
 
-      - name: Run a curl test on app
-        run: curl http://localhost:8080/api/cities?query
+      - name: Run a curl test
+        run: |
+          response_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/api/cities?query)
+          if [ $response_code -ne 200 ]; then
+            echo "Curl test failed with response code $response_code"
+            exit 1
+          fi
+          echo "Curl test passed with response code $response_code"
 
-      # - name: Run tests
-      #   run: docker-compose -f docker/demo/docker-compose.ci.yml run --rm test
+      - name: Run tests (phpUnit)
+        run: docker exec app-container ./html/vendor/bin/phpunit --verbose ./html/App/Test/ApiTest --stderr
 
       - name: Stop and remove containers
         run: docker-compose -f docker/dev/docker-compose.ci.yml down
